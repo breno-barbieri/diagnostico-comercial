@@ -1,0 +1,683 @@
+<title>Diagnóstico Comercial · Breno Barbieri</title>
+<style>
+/* ── fontes embutidas (CSP bloqueia CDN de fontes) ───────────────── */
+@font-face{font-family:'Fraunces';src:url(data:font/woff2;base64,__FR_B64__) format('woff2');
+  font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'InterVar';src:url(data:font/woff2;base64,__IN_B64__) format('woff2');
+  font-weight:400 600;font-style:normal;font-display:swap}
+
+/* ── tokens · claro ──────────────────────────────────────────────── */
+:root{
+  --ground:#F2F0EC; --ink:#0E0E10; --ink-2:#2B2B2B; --accent:#A07C4B;
+  --rule:#D9D5CC; --hover:#EAE7E1;
+  --inv-ground:#0E0E10; --inv-ink:#F2F0EC; --inv-ink-2:#C9C6C0; --inv-accent:#C08F52;
+  --serif:'Fraunces',Georgia,'Iowan Old Style',serif;
+  --sans:'InterVar',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+}
+/* ── tokens · escuro ─────────────────────────────────────────────── */
+@media(prefers-color-scheme:dark){
+  :root{
+    --ground:#141310; --ink:#ECE8DF; --ink-2:#B6B0A4; --accent:#C89B5E;
+    --rule:#322F28; --hover:#201E19;
+    --inv-ground:#ECE8DF; --inv-ink:#141310; --inv-ink-2:#4A463D; --inv-accent:#7E5C2C;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#141310; --ink:#ECE8DF; --ink-2:#B6B0A4; --accent:#C89B5E;
+  --rule:#322F28; --hover:#201E19;
+  --inv-ground:#ECE8DF; --inv-ink:#141310; --inv-ink-2:#4A463D; --inv-accent:#7E5C2C;
+}
+:root[data-theme="light"]{
+  --ground:#F2F0EC; --ink:#0E0E10; --ink-2:#2B2B2B; --accent:#A07C4B;
+  --rule:#D9D5CC; --hover:#EAE7E1;
+  --inv-ground:#0E0E10; --inv-ink:#F2F0EC; --inv-ink-2:#C9C6C0; --inv-accent:#C08F52;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;
+  padding:clamp(20px,5vw,64px) clamp(18px,5vw,40px);
+  font-feature-settings:"kern" 1;-webkit-font-smoothing:antialiased}
+.wrap{max-width:760px;margin:0 auto}
+.eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);font-weight:500}
+.eyebrow.mute{color:var(--ink-2);opacity:.6}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(34px,6vw,54px);line-height:1.05;
+  letter-spacing:-.015em;margin:14px 0 0;text-wrap:balance}
+h2{font-family:var(--serif);font-weight:400;font-size:clamp(24px,4vw,34px);line-height:1.15;
+  letter-spacing:-.01em;margin:0 0 12px;text-wrap:balance}
+h3{font-family:var(--serif);font-weight:400;font-size:21px;line-height:1.25;margin:0 0 8px;text-wrap:balance}
+p{margin:0 0 14px;max-width:62ch}
+.lede{font-size:18px;color:var(--ink-2)}
+.rule{height:1px;background:var(--rule);margin:34px 0}
+.screen{display:none}
+.screen.on{display:block;animation:rise .38s ease both}
+.screen:focus{outline:none}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+button{font-family:inherit;font-size:inherit;cursor:pointer}
+.btn{display:inline-block;background:var(--inv-ground);color:var(--inv-ink);border:0;padding:15px 30px;
+  letter-spacing:.06em;font-size:13px;text-transform:uppercase;font-weight:500;
+  text-decoration:none;text-align:center;transition:opacity .2s}
+.btn:hover{opacity:.82}
+.btn[disabled]{opacity:.28;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--rule)}
+:where(button,a,input):focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+.mark{width:96px;height:26px;display:block}
+.mk-line{fill:none;stroke:var(--ink);stroke-width:5;stroke-linecap:round}
+.mk-dot{fill:var(--accent)}
+
+.prog{display:flex;gap:6px;margin-bottom:30px}
+.prog i{height:2px;flex:1;background:var(--rule)}
+.prog i.done{background:var(--ink)}
+
+.qnum{font-family:var(--serif);font-size:13px;color:var(--accent);letter-spacing:.12em}
+.opts{margin:26px 0 0;display:flex;flex-direction:column;gap:1px;background:var(--rule)}
+.opt{background:var(--ground);border:0;color:inherit;text-align:left;padding:17px 20px;width:100%;
+  line-height:1.45;display:flex;gap:14px;align-items:flex-start;transition:background .15s,color .15s}
+.opt:hover{background:var(--hover)}
+.opt.sel{background:var(--inv-ground);color:var(--inv-ink)}
+.opt .dot{width:9px;height:9px;border-radius:50%;border:1px solid currentColor;flex:0 0 auto;
+  margin-top:7px;opacity:.5}
+.opt.sel .dot{background:var(--inv-accent);border-color:var(--inv-accent);opacity:1}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:32px;gap:16px}
+.nav.start{justify-content:flex-start}
+.back{background:none;border:0;color:var(--ink-2);font-size:12px;letter-spacing:.1em;
+  text-transform:uppercase;opacity:.6}
+.back:hover{opacity:1}
+
+label{display:block;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2);
+  opacity:.75;margin:20px 0 6px}
+label .opt-tag{text-transform:none;letter-spacing:0}
+input{width:100%;background:transparent;border:0;border-bottom:1px solid var(--rule);padding:9px 0;
+  font-family:inherit;font-size:17px;color:var(--ink);outline:none}
+input:focus{border-color:var(--accent)}
+.fine{font-size:12px;color:var(--ink-2);opacity:.7;margin-top:22px;max-width:62ch}
+.fine.warn{color:var(--accent);opacity:1;margin-top:10px}
+[hidden]{display:none!important}
+
+.verdict{font-family:var(--serif);font-size:clamp(26px,4.4vw,38px);line-height:1.2;
+  letter-spacing:-.01em;margin:16px 0 0;max-width:34ch;text-wrap:balance}
+.gapline{font-size:17px;color:var(--ink-2);margin-top:16px}
+
+figure{margin:34px 0 6px}
+#wave{width:100%;height:auto;display:block}
+.w-ghost{fill:none;stroke:var(--rule);stroke-width:5;stroke-linecap:round}
+.w-solid{fill:none;stroke:var(--ink);stroke-width:5;stroke-linecap:round}
+.w-drop{stroke:var(--rule);stroke-width:1}
+.w-span{stroke:var(--accent);stroke-width:1;stroke-dasharray:3 4}
+.w-dot{fill:var(--accent)}
+.w-ring{fill:none;stroke:var(--accent);stroke-width:2}
+figcaption{display:flex;justify-content:space-between;font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-2);opacity:.6;margin-top:6px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:18px;font-size:12px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2)}
+.legend span{display:flex;align-items:center;gap:8px}
+.legend .sw{width:10px;height:10px;border-radius:50%;flex:0 0 auto}
+.legend .sw.fill{background:var(--accent)}
+.legend .sw.ring{border:2px solid var(--accent)}
+.legend .gapn{color:var(--accent)}
+
+.card{border-top:1px solid var(--ink);padding-top:18px;margin:34px 0}
+.layers{margin:26px 0 0}
+.layer{display:grid;grid-template-columns:1fr 132px 74px;gap:14px;align-items:center;
+  padding:13px 0;border-bottom:1px solid var(--rule);font-size:14px}
+.layer:first-child{border-top:1px solid var(--rule)}
+.bar{display:flex;gap:3px}
+.bar i{height:6px;flex:1;background:var(--rule)}
+.bar i.f{background:var(--ink)}
+.lvl{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);
+  opacity:.75;text-align:right}
+
+ol.acts{list-style:none;counter-reset:a;margin:6px 0 0}
+ol.acts li{counter-increment:a;padding:11px 0 11px 34px;position:relative;
+  border-bottom:1px solid var(--rule);max-width:62ch}
+ol.acts li::before{content:counter(a,decimal-leading-zero);position:absolute;left:0;top:11px;
+  font-family:var(--serif);font-size:12px;color:var(--accent)}
+.also{font-size:14px;color:var(--ink-2);margin-top:18px}
+
+.mats-intro{font-size:15px;color:var(--ink-2);margin:10px 0 0;max-width:62ch}
+.mats{margin:22px 0 0}
+.mat{display:grid;grid-template-columns:1fr auto;gap:12px 26px;align-items:start;
+  padding:20px 0;border-bottom:1px solid var(--rule)}
+.mat:first-child{border-top:1px solid var(--rule)}
+.mat-tipo{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-2);opacity:.7;margin:0}
+.mat-tipo .mat-tag{color:var(--accent);opacity:1}
+.mat h4{font-family:var(--serif);font-weight:400;font-size:19px;line-height:1.25;margin:7px 0 0}
+.mat-desc{font-size:14px;color:var(--ink-2);margin:6px 0 0;max-width:52ch}
+.mat-get{align-self:center;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);
+  text-decoration:none;border-bottom:1px solid var(--accent);padding-bottom:3px;white-space:nowrap;
+  transition:color .15s}
+.mat-get:hover{color:var(--accent)}
+.mat-url{font-size:11px;color:var(--ink-2);margin:8px 0 0;word-break:break-all}
+@media(max-width:560px){
+  .mat{grid-template-columns:1fr}
+  .mat-get{align-self:start;justify-self:start}
+}
+
+.cta{background:var(--inv-ground);color:var(--inv-ink);padding:clamp(26px,5vw,40px);margin:44px 0 0}
+.cta .eyebrow{color:var(--inv-accent)}
+.cta h3{color:var(--inv-ink)}
+.cta p{color:var(--inv-ink-2)}
+.cta .btn{background:var(--inv-ink);color:var(--inv-ground);margin-top:8px}
+.cta-note{font-size:12px;letter-spacing:.04em;color:var(--inv-ink-2);opacity:.85;margin:14px 0 0}
+.cta-note #cta-num{color:var(--inv-accent);white-space:nowrap}
+
+footer{margin-top:56px;display:flex;justify-content:space-between;font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-2);opacity:.5;flex-wrap:wrap;gap:10px}
+
+@media(max-width:560px){
+  .layer{grid-template-columns:1fr 84px 60px;gap:10px;font-size:13px}
+  .nav{flex-direction:column-reverse;align-items:stretch}
+  .nav .btn{width:100%}
+  .nav.start{flex-direction:column}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ── impressão: sempre em papel claro ────────────────────────────── */
+@page{margin:14mm}
+@media print{
+  :root,:root[data-theme="dark"],:root[data-theme="light"]{
+    --ground:#FFF; --ink:#0E0E10; --ink-2:#2B2B2B; --accent:#8A6733;
+    --rule:#CFCBC2; --hover:#F2F0EC;
+    --inv-ground:#0E0E10; --inv-ink:#FFF; --inv-ink-2:#C9C6C0; --inv-accent:#C08F52;
+  }
+  body{padding:0;font-size:12pt;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .screen.on{animation:none}
+  .nav,.print-hint{display:none!important}
+  /* no papel o botão não serve: mostra o endereço do arquivo */
+  .mat-get{display:none}
+  .mat-url[hidden]{display:block!important}
+  figure,.card,.cta,.layer,ol.acts li,.mat{break-inside:avoid}
+  .verdict{font-size:24pt}
+  footer{margin-top:28px}
+}
+</style>
+
+<div class="wrap">
+
+<!-- ═══ ABERTURA ═══ -->
+<section class="screen on" id="s-intro" tabindex="-1">
+  <svg class="mark" viewBox="0 0 200 54" role="img" aria-label="Breno Barbieri">
+    <path class="mk-line" d="M8 30 C16 -2 30 -2 38 30 C46 58 60 54 68 34 C74 20 86 18 94 30 C102 42 116 42 128 36 C142 29 160 27 176 27"/>
+    <circle class="mk-dot" cx="180" cy="27" r="6"/>
+  </svg>
+  <p class="eyebrow" style="margin-top:34px">Diagnóstico comercial · 5 perguntas · 2 minutos</p>
+  <h1>Qual onda a sua<br>operação sustenta.</h1>
+  <div class="rule"></div>
+  <p class="lede">Toda empresa opera em três camadas: cultura, processo e tecnologia. A implementação avança em ondas: organizar a base, dar cadência, ganhar escala.</p>
+  <p class="lede">O problema quase nunca é a onda em que você está. É a distância entre a onda que a sua ferramenta promete e a onda que a sua operação consegue sustentar. Este diagnóstico mede essa distância.</p>
+  <div class="nav start"><button class="btn" onclick="go(0)">Começar</button></div>
+  <footer><span>Breno Barbieri · Inteligência Comercial</span><span>octanesales.com.br</span></footer>
+</section>
+
+<!-- ═══ PERGUNTAS ═══ -->
+<section class="screen" id="s-q" tabindex="-1">
+  <div class="prog" id="prog"></div>
+  <p class="qnum" id="qnum"></p>
+  <h2 id="qtitle"></h2>
+  <p style="color:var(--ink-2);font-size:15px" id="qhint"></p>
+  <div class="opts" id="opts"></div>
+  <div class="nav">
+    <button class="back" id="back" onclick="prev()">← Voltar</button>
+    <button class="btn" id="next" onclick="next()" disabled>Continuar</button>
+  </div>
+</section>
+
+<!-- ═══ NOME ═══ -->
+<section class="screen" id="s-form" tabindex="-1">
+  <p class="eyebrow">Último passo</p>
+  <h2 style="margin-top:12px">Antes de abrir<br>o resultado.</h2>
+  <p style="color:var(--ink-2)">Nenhum dos dois campos é obrigatório e nada é enviado para ninguém. Eles só fazem o relatório sair com o seu nome. O resultado aparece nesta tela e você pode salvar em PDF.</p>
+  <label for="f-nome">Nome <span class="opt-tag">(opcional)</span></label>
+  <input id="f-nome" autocomplete="given-name">
+  <label for="f-empresa">Empresa <span class="opt-tag">(opcional)</span></label>
+  <input id="f-empresa" autocomplete="organization">
+  <div class="nav">
+    <button class="back" onclick="go(4)">← Voltar</button>
+    <button class="btn" id="send" onclick="submit()">Ver meu diagnóstico</button>
+  </div>
+  <p class="fine">Suas respostas ficam apenas neste navegador, nesta sessão. Se você fechar a página, elas se vão. Salve o PDF se quiser guardar.</p>
+</section>
+
+<!-- ═══ RELATÓRIO ═══ -->
+<section class="screen" id="s-report" tabindex="-1">
+  <p class="eyebrow" id="r-eyebrow"></p>
+  <p class="verdict" id="r-verdict"></p>
+  <p class="gapline" id="r-gap"></p>
+
+  <figure>
+    <svg id="wave" viewBox="0 0 720 132" preserveAspectRatio="xMidYMid meet" role="img" aria-label=""></svg>
+    <figcaption><span>Caos</span><span>Operação previsível</span></figcaption>
+    <div class="legend" id="r-legend"></div>
+  </figure>
+
+  <div class="card">
+    <p class="eyebrow mute" id="t-eyebrow"></p>
+    <h3 id="t-title" style="margin-top:10px"></h3>
+    <p id="t-body" style="margin-top:10px"></p>
+    <p class="eyebrow mute" style="margin-top:26px">Os próximos 30 dias</p>
+    <ol class="acts" id="t-acts"></ol>
+    <p class="also" id="t-also"></p>
+  </div>
+
+  <div class="rule"></div>
+  <p class="eyebrow mute">Seu perfil por camada</p>
+  <div class="layers" id="r-layers"></div>
+  <p class="fine" id="r-floor"></p>
+
+  <section id="r-mats" hidden>
+    <div class="rule"></div>
+    <p class="eyebrow mute">Materiais de apoio</p>
+    <p class="mats-intro">Os instrumentos que as ações acima pedem, prontos para usar. Download direto, sem cadastro.</p>
+    <div class="mats" id="mats-list"></div>
+  </section>
+
+  <div class="cta">
+    <p class="eyebrow">O que este diagnóstico não faz</p>
+    <h3 style="margin-top:12px">Ele diz onde você trava.<br>Não diz quanto isso custa.</h3>
+    <p>Cinco perguntas classificam a maturidade da operação. Elas não medem onde o funil vaza, quanto custa cada cliente, quanto tempo ele fica e qual gargalo devolve mais dinheiro se resolvido primeiro. Isso exige reconstruir a sua máquina comercial com os seus números. É o diagnóstico completo.</p>
+    <a class="btn" id="cta-link" href="#" target="_blank" rel="noopener">Conversar sobre o meu caso</a>
+    <p class="cta-note">Abre o WhatsApp com o seu resultado já escrito · <span id="cta-num"></span></p>
+  </div>
+
+  <div class="nav start" style="margin-top:26px">
+    <button class="btn ghost" onclick="toPDF()">Salvar em PDF</button>
+    <button class="btn ghost" onclick="restart()">Refazer</button>
+  </div>
+  <p class="fine print-hint">Cmd + P no Mac, Ctrl + P no Windows, e escolha “Salvar como PDF”.</p>
+  <p class="fine print-hint warn" id="print-fallback" hidden>Esta janela não deixou abrir a impressão. Abra o diagnóstico em uma aba própria e use Cmd + P no Mac ou Ctrl + P no Windows.</p>
+  <footer><span>Breno Barbieri · Inteligência Comercial</span><span>octanesales.com.br</span></footer>
+</section>
+
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════════
+   CONFIGURAÇÃO
+   ══════════════════════════════════════════════════════════════════ */
+const CONFIG = {
+  // Vazio = nada sai do navegador. Para capturar lead, cole aqui a URL
+  // do webhook (Zapier / Make / n8n / Kommo) E ajuste o texto da tela
+  // "Antes de abrir o resultado", que hoje promete que nada é enviado.
+  ENDPOINT: "",
+  // WhatsApp de destino do botão: só dígitos, com país e DDD.
+  WHATSAPP: "5527998764488",
+  // Como o número aparece escrito na página.
+  WHATSAPP_LABEL: "+55 27 99876-4488"
+};
+
+/* Monta o link do WhatsApp já com o resultado dentro da mensagem, para a
+   conversa começar qualificada em vez de um "oi" sem contexto. */
+function waHref(cfg, r){
+  const linhas = [];
+  linhas.push('Oi, Breno. Fiz o diagnóstico da onda.');
+  if(r.nome) linhas.push(r.empresa ? `Sou ${r.nome}, da ${r.empresa}.` : `Sou ${r.nome}.`);
+  linhas.push(r.gap === 0
+    ? `Sustento ${r.sustentada} e minhas ferramentas estão no mesmo nível.`
+    : `Sustento ${r.sustentada}, mas minhas ferramentas estão em ${r.aparente}: gap de ${r.gap} ${r.gap === 1 ? 'camada' : 'camadas'}.`);
+  linhas.push(`${r.topo ? 'Próxima fronteira' : 'Trava principal'}: ${r.trava}`);
+  linhas.push('Quero conversar sobre o meu caso.');
+  return 'https://wa.me/' + cfg.WHATSAPP + '?text=' + encodeURIComponent(linhas.join('\n'));
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   MODELO
+   Cada pergunta mede uma camada. Cada opção vale um nível de onda:
+   0 = ausente · 1 = Onda 1 · 2 = Onda 2 · 3 = Onda 3
+   A onda SUSTENTADA é o menor nível do conjunto, nunca a média:
+   uma camada em zero derruba tudo que depende dela.
+   A ordem do array é a ordem de pré-requisito, usada para o desempate.
+   ══════════════════════════════════════════════════════════════════ */
+const Q = [
+{ id:"base", camada:"Base · captura e centralização",
+  t:"Onde a sua venda vive hoje?",
+  h:"Onde a oportunidade fica registrada de um jeito que a empresa, e não só o vendedor, consegue enxergar.",
+  o:[
+   "Cada um tem o seu jeito: WhatsApp pessoal, caderno, memória. Não existe um lugar único.",
+   "Existe uma planilha ou um CRM onde a maior parte das oportunidades está, mesmo que incompleto.",
+   "CRM com funil, responsável e histórico centralizados. Todo mundo opera lá dentro.",
+   "CRM ligado aos canais reais do cliente, com captura automática. Nada entra por fora."
+  ]},
+{ id:"rito", camada:"Cultura · rituais de gestão",
+  t:"Em quais rituais o sistema é aberto?",
+  h:"Daily comercial, 1:1, reunião de pipeline e forecast.",
+  o:[
+   "Em nenhum. A conversa comercial acontece fora do sistema.",
+   "Pontualmente, quando alguém pede um relatório ou um número.",
+   "Em pelo menos dois ritos fixos, por exemplo daily e reunião de pipeline.",
+   "Nos quatro. Se não está no sistema, não entra na pauta."
+  ]},
+{ id:"gatilho", camada:"Processo · gatilho de passagem",
+  t:"Por que uma oportunidade muda de etapa?",
+  h:"O que precisa ser verdade para o lead sair de uma etapa e ir para a próxima.",
+  o:[
+   "Não temos etapas definidas, ou cada um interpreta do seu jeito.",
+   "As etapas têm nome, mas o vendedor move o card quando sente que avançou.",
+   "Cada etapa tem critério objetivo escrito do que precisa ser verdade para avançar.",
+   "Além do critério, existe evidência obrigatória registrada. Sem ela o card não anda."
+  ]},
+{ id:"sla", camada:"Processo · tempo de resposta",
+  t:"Quando um lead entra, existe prazo com dono e consequência?",
+  h:"O tempo máximo aceitável para a operação agir.",
+  o:[
+   "Atende quem vir primeiro, quando der.",
+   "Existe uma expectativa informal de responder rápido, sem número definido.",
+   "Existe tempo máximo definido e um responsável por canal ou etapa.",
+   "O tempo é medido, dispara alerta automático e tem regra de redistribuição quando estoura."
+  ]},
+{ id:"dado", camada:"Gestão · base da decisão",
+  t:"Qual foi a base da sua última decisão comercial relevante?",
+  h:"Contratar, cortar investimento, mudar meta, mexer no time.",
+  o:[
+   "Percepção e experiência. Os números do sistema não ajudariam.",
+   "Números soltos, como faturamento e total de vendas, puxados na mão.",
+   "Relatório do CRM, com a ressalva de que parte do dado precisa ser conferida.",
+   "Painel do sistema, confiável a ponto de o forecast ser cobrado em cima dele."
+  ]}
+];
+
+/* ══════════════════════════════════════════════════════════════════
+   MATERIAIS DE APOIO
+   Edite só esta lista. Lista vazia = a seção não aparece no relatório.
+   · para  = id da camada que o material resolve (base, rito, gatilho,
+             sla, dado). Quando bate com a trava da pessoa, o material
+             ganha o selo de recomendado. Use null para nenhum.
+   · href  = arquivo em /materiais/... ou link externo (Drive, Sheets).
+   · baixar = true força download em vez de abrir no navegador. Só use
+             em arquivo hospedado junto com a página, não em link externo.
+   ══════════════════════════════════════════════════════════════════ */
+const MATERIAIS = [
+  { tipo:"Guia", para:"base",
+    titulo:"Kit de implementação inicial de CRM",
+    desc:"Checklist de maturidade, mapeamento de uma etapa crítica da jornada real e o plano de sete dias para consolidar a Onda 1 antes de mexer na ferramenta. Fecha com glossário dos termos.",
+    href:"/materiais/kit-implementacao-crm.pdf",
+    nome:"Kit de Implementação Inicial CRM.pdf", baixar:true },
+  { tipo:"Planilha", para:"rito",
+    titulo:"Template de daily comercial",
+    desc:"Uma linha por oportunidade discutida, sobre as quatro perguntas de tração. O painel lê a aba de registro e mostra onde o funil trava, quanto valor está parado e há quantos dias.",
+    href:"/materiais/template-daily-comercial.xlsx",
+    nome:"Template Daily Comercial.xlsx", baixar:true },
+  { tipo:"Planilha", para:null,
+    titulo:"Calculadora de O.T.E",
+    desc:"Fixo, variável e bônus de operação, com os quatro guarda-corpos que impedem o modelo de virar incentivo a preencher CRM. Traz aba de sensibilidade: quanto o vendedor leva em cada cenário.",
+    href:"/materiais/calculadora-ote.xlsx",
+    nome:"Calculadora OTE.xlsx", baixar:true }
+];
+
+const ONDAS = [
+  {n:"Pré-onda", nome:"Base não organizada"},
+  {n:"Onda 01", nome:"Organizar a base"},
+  {n:"Onda 02", nome:"Dar cadência"},
+  {n:"Onda 03", nome:"Ganhar escala"}
+];
+
+/* Diagnóstico da trava: variante grave (nível 0-1) e variante média (nível 2) */
+const TRAVAS = {
+base:{
+ titulo:"A sua operação não tem um lugar único de verdade.",
+ grave:{
+  txt:"A venda está distribuída entre WhatsApp pessoal, planilha e memória. Isso não é desorganização: é um problema de propriedade. Quando o registro pertence ao vendedor e não à empresa, cada saída de pessoa leva pipeline junto, e nenhuma análise posterior é confiável, porque a amostra é parcial por construção. Antes de qualquer automação, a oportunidade precisa existir independentemente de quem a atendeu.",
+  acts:["Escolha um único lugar de registro e declare a regra: fora dele, a oportunidade não existe.",
+        "Migre apenas o pipeline aberto. Histórico morto não compensa a fricção da migração.",
+        "Defina responsável nominal por oportunidade. Sem dono, não há o que cobrar."]},
+ medio:{
+  txt:"Existe um lugar único, mas o lead ainda entra por fora: canal que não conversa com o sistema, contato que cai no celular de alguém. Cada entrada não capturada é receita que a operação nunca soube que teve. O próximo passo não é criar mais campo. É fechar as portas laterais.",
+  acts:["Liste todos os canais por onde um cliente consegue falar com a empresa e marque os que não caem no sistema.",
+        "Integre ou desligue. Canal não integrado é canal que você não gerencia.",
+        "Meça por 30 dias: leads capturados no sistema contra conversas reais acontecidas."]}},
+rito:{
+ titulo:"O sistema não aparece onde a operação é decidida.",
+ grave:{
+  txt:"Treinamento inicial não sustenta adoção. Rito sustenta. Se a conversa comercial acontece fora do sistema, o time aprende, corretamente, que o sistema é acessório. Isso não é indisciplina do vendedor: é ausência de exemplo da liderança. Adoção não se cobra, se normaliza.",
+  acts:["Abra o sistema em toda conversa de venda. Se não está registrado, não entra na pauta.",
+        "Instale a daily comercial de 15 minutos sobre as quatro perguntas de tração de pipeline.",
+        "Traga pipeline review e forecast para dentro do mesmo sistema. Dois ritos já mudam o padrão."]},
+ medio:{
+  txt:"O sistema já entra em parte dos ritos, mas ainda não nos quatro. O ponto cego costuma ser o forecast: enquanto a previsão for feita no feeling e o sistema servir só para consultar, o dado continua sendo relatório, e não base de decisão.",
+  acts:["Construa o forecast exclusivamente a partir do funil, com categorização declarada por oportunidade.",
+        "Leve o 1:1 para dentro do pipeline do vendedor, não para uma pauta paralela.",
+        "Meça a acurácia de previsto contra realizado por três meses. É o que dá autoridade ao número."]}},
+gatilho:{
+ titulo:"As etapas do seu funil são nomes, não critérios.",
+ grave:{
+  txt:"Se a oportunidade avança porque o vendedor sentiu que avançou, o funil mede humor e não probabilidade. A consequência direta é que forecast, conversão por etapa e ciclo de venda ficam sem lastro: você tem números, mas não tem leitura. Gatilho de passagem é a condição mínima que precisa ser verdadeira para o lead avançar, e é o que separa avanço real de empurrão de card.",
+  acts:["Para cada etapa, escreva três linhas: o que precisa ser verdade, qual evidência prova, onde fica registrado.",
+        "Faça esse desenho com os vendedores que mais vendem. Critério imposto de fora não pega.",
+        "Reclassifique dez oportunidades abertas com o critério novo. O tamanho do susto é o seu argumento interno."]},
+ medio:{
+  txt:"O critério existe escrito, mas ainda depende de boa-fé: nada impede o card de andar sem evidência. Enquanto a evidência for opcional, o funil registra intenção, não fato. E um funil de intenções produz um forecast de intenções.",
+  acts:["Torne a evidência obrigatória na passagem das duas etapas mais caras do funil.",
+        "Audite mensalmente uma amostra de avanços: quantos teriam passado no critério.",
+        "Compare a conversão por etapa antes e depois. A queda inicial é o dado ficando honesto."]}},
+sla:{
+ titulo:"Não existe tempo dentro do seu processo.",
+ grave:{
+  txt:"Você sabe por onde o lead entra e por quais etapas ele passa, mas não em quanto tempo ele precisa ser atendido. Sem prazo declarado, com dono e consequência, o atendimento é improviso, e a perda por demora não aparece em lugar nenhum, porque ninguém a mede. SLA é o tempo máximo aceitável para a operação agir.",
+  acts:["Defina tempo máximo de primeira resposta por canal de entrada.",
+        "Nomeie o responsável por canal. Responsabilidade difusa é responsabilidade de ninguém.",
+        "Declare o que acontece quando o prazo estoura: alerta e redistribuição."]},
+ medio:{
+  txt:"O prazo existe e tem dono, mas não é medido nem tem consequência automática. Regra sem instrumentação vira intenção: cumprida quando a operação está calma e abandonada exatamente quando o volume cresce, que é quando ela importaria.",
+  acts:["Instrumente o tempo de primeira resposta como indicador visível para o time.",
+        "Automatize o alerta no estouro do prazo.",
+        "Defina a regra de redistribuição. Sem redistribuição, o alerta vira ruído e é ignorado."]}},
+dado:{
+ titulo:"A sua decisão comercial ainda não sai do sistema.",
+ grave:{
+  txt:"Percepção se discute; número não. Enquanto a decisão vier de leitura pessoal, cada discussão comercial vira disputa de narrativa e a correção de rota chega no fechamento do mês, quando já não dá para agir. O problema raramente é falta de relatório: é falta de confiança no dado que alimenta o relatório.",
+  acts:["Escolha três indicadores e cobre-os semanalmente, mesmo imperfeitos. Uso é o que corrige o dado.",
+        "Trate cada divergência apontada pelo time como defeito de processo, não de sistema.",
+        "Só monte painel depois que os três indicadores pararem de ser contestados."]},
+ medio:{
+  txt:"O relatório já existe, mas parte do dado precisa ser conferida, e dado que precisa de conferência não é usado sob pressão. Higiene de dado não é capricho administrativo: é a diferença entre um painel e uma mentira bem apresentada. Lixo entra, lixo sai.",
+  acts:["Identifique os três campos que mais exigem conferência e corrija a origem, não o relatório.",
+        "Estabeleça um dono da higiene do dado, com revisão semanal.",
+        "Publique o painel oficial e encerre as planilhas paralelas. Duas versões da verdade é nenhuma."]}}
+};
+
+/* Quando as cinco camadas estão em Onda 03 não existe trava de maturidade:
+   falar de trava aqui contradiz a resposta que a pessoa acabou de dar. */
+const TOPO = {
+ titulo:"Não existe trava de maturidade aqui. O ganho deixa de ser implementação.",
+ txt:"As cinco camadas no mesmo nível significam que base, cultura, processo e dado sustentam o que a ferramenta promete. Operação assim não melhora instalando mais tecnologia: melhora apertando o que já roda. A pergunta muda de o que falta montar para onde estamos pagando caro por um resultado que já temos. É discussão de margem, produtividade por vendedor e qualidade de pipeline, não de implantação.",
+ acts:["Meça o custo de aquisição por canal e corte o que sustenta volume sem sustentar margem.",
+       "Compare a produtividade entre vendedores dentro do mesmo processo. A variação mostra o que ainda é talento e deveria ser método.",
+       "Audite a qualidade da entrada: pipeline cheio de lead ruim consome a mesma capacidade e não vira receita."]
+};
+
+/* ══════════════════════════════════════════════════════════════════ */
+let i = 0, ans = new Array(Q.length).fill(null);
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
+  const el = $('#' + id);
+  el.classList.add('on');
+  window.scrollTo({top:0, behavior:'instant'});
+  el.focus({preventScroll:true});
+}
+
+function go(n){
+  if(n >= Q.length){ show('s-form'); return; }
+  i = n;
+  const q = Q[i];
+  $('#prog').innerHTML = Q.map((_,k) => `<i class="${k <= i ? 'done' : ''}"></i>`).join('');
+  $('#qnum').textContent = String(i+1).padStart(2,'0') + ' / ' + String(Q.length).padStart(2,'0') + '  ·  ' + q.camada;
+  $('#qtitle').textContent = q.t;
+  $('#qhint').textContent = q.h;
+  $('#opts').innerHTML = q.o.map((t,k) =>
+    `<button class="opt ${ans[i] === k ? 'sel' : ''}" onclick="pick(${k})"><span class="dot"></span><span>${esc(t)}</span></button>`).join('');
+  $('#back').style.visibility = i === 0 ? 'hidden' : 'visible';
+  $('#next').disabled = ans[i] === null;
+  $('#next').textContent = i === Q.length - 1 ? 'Ver resultado' : 'Continuar';
+  show('s-q');
+}
+function pick(k){
+  ans[i] = k;
+  document.querySelectorAll('#opts .opt').forEach((b,n) => b.classList.toggle('sel', n === k));
+  $('#next').disabled = false;
+}
+function next(){ if(ans[i] !== null) go(i+1); }
+function prev(){ go(i-1); }
+function restart(){
+  i = 0; ans = new Array(Q.length).fill(null);
+  $('#f-nome').value = ''; $('#f-empresa').value = '';
+  show('s-intro');
+}
+
+function submit(){
+  const lead = {
+    nome: $('#f-nome').value.trim(),
+    empresa: $('#f-empresa').value.trim(),
+    respostas: Object.fromEntries(Q.map((q,k) => [q.id, ans[k]])),
+    onda_sustentada: Math.min(...ans),
+    onda_aparente: Math.max(...ans),
+    gap: Math.max(...ans) - Math.min(...ans),
+    origem: 'diagnostico-onda',
+    data: new Date().toISOString()
+  };
+  if(CONFIG.ENDPOINT){
+    fetch(CONFIG.ENDPOINT, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(lead)}).catch(()=>{});
+  }
+  report(lead);
+}
+
+function report(lead){
+  const min = Math.min(...ans), max = Math.max(...ans), gap = max - min;
+  const nome = lead.nome ? lead.nome.split(' ')[0] : '';
+
+  $('#r-eyebrow').textContent = (nome ? nome + ', seu ' : 'Seu ') + 'diagnóstico';
+
+  if(gap === 0 && min === 3){
+    $('#r-verdict').textContent = 'Sua operação sustenta a Onda 03, e é isso que suas ferramentas entregam.';
+    $('#r-gap').textContent = 'As cinco camadas estão no mesmo nível. Operação coerente é rara: o risco aqui deixa de ser implementação e passa a ser otimização: margem, produtividade por vendedor e qualidade de pipeline.';
+  }else if(gap === 0){
+    $('#r-verdict').textContent = 'Você opera em ' + ONDAS[min].n + ', ' + ONDAS[min].nome.toLowerCase() + ', e suas ferramentas estão exatamente aí.';
+    $('#r-gap').textContent = 'Não há descolamento entre o que você comprou e o que você sustenta. O caminho é avançar de onda por inteiro, sem pular camada.';
+  }else if(gap === 1){
+    $('#r-verdict').textContent = 'Você sustenta ' + ONDAS[min].n + '. Sua operação já tem peça de ' + ONDAS[max].n + '.';
+    $('#r-gap').textContent = 'Uma camada de descolamento é normal e administrável, desde que a camada mais fraca seja resolvida antes de subir o resto. Ferramenta na frente do processo não acelera: amplifica.';
+  }else{
+    $('#r-verdict').textContent = min === 0
+      ? 'Você já tem ferramenta de ' + ONDAS[max].n + ' rodando sobre uma base que ainda não está organizada.'
+      : 'Você comprou ' + ONDAS[max].n + ' para uma operação que sustenta ' + ONDAS[min].n + '.';
+    $('#r-gap').textContent = 'São ' + gap + ' camadas de distância. É exatamente aqui que mora a maior parte das implementações que não entregam o resultado esperado: a tecnologia foi ligada antes de existir o comportamento e o processo que ela deveria acelerar. Ela não organizou a operação. Acelerou a desorganização.';
+  }
+
+  drawWave(min, max);
+
+  $('#r-legend').innerHTML =
+    `<span><i class="sw fill"></i>Sustentada · ${ONDAS[min].n}</span>` +
+    (max > min
+      ? `<span><i class="sw ring"></i>Aparente · ${ONDAS[max].n}</span>` +
+        `<span class="gapn">Gap · ${gap} ${gap === 1 ? 'camada' : 'camadas'}</span>`
+      : `<span>Sem descolamento entre onda sustentada e aparente</span>`);
+
+  /* trava: menor nível; empate resolvido pela ordem de pré-requisito do array */
+  const topo = min === 3;
+  const idx = ans.indexOf(min), q = Q[idx], t = topo ? TOPO : TRAVAS[q.id];
+  const v = topo ? TOPO : (min <= 1 ? t.grave : t.medio);
+  $('#t-eyebrow').textContent = topo ? 'Sua próxima fronteira' : 'Sua trava principal';
+  $('#t-title').textContent = t.titulo;
+  $('#t-body').textContent = v.txt;
+  $('#t-acts').innerHTML = v.acts.map(a => `<li>${esc(a)}</li>`).join('');
+  const outras = ans.map((s,k) => s === min ? k : -1).filter(k => k >= 0 && k !== idx);
+  $('#t-also').textContent = (!topo && outras.length)
+    ? 'Empatadas no mesmo nível: ' + outras.map(k => Q[k].camada.split(' · ')[1]).join(', ') + '. Resolva a trava principal primeiro. Ela é pré-requisito das outras.'
+    : '';
+
+  renderMateriais(topo ? null : q.id);
+
+  $('#r-layers').innerHTML = Q.map((q,k) => {
+    const s = ans[k];
+    return `<div class="layer"><span>${esc(q.camada)}</span>
+      <span class="bar">${[1,2,3].map(n => `<i class="${s >= n ? 'f' : ''}"></i>`).join('')}</span>
+      <span class="lvl">${s === 0 ? 'Ausente' : ONDAS[s].n}</span></div>`;}).join('');
+  $('#r-floor').textContent = 'Sua onda é o piso, não a média. Uma camada ausente derruba tudo que depende dela. Por isso a leitura usa o menor nível do conjunto, e não a soma.';
+  $('#cta-link').href = waHref(CONFIG, {
+    nome: lead.nome, empresa: lead.empresa, gap, topo,
+    sustentada: ONDAS[min].n, aparente: ONDAS[max].n,
+    trava: topo ? 'eficiência e margem, não implementação.' : t.titulo
+  });
+  $('#cta-num').textContent = CONFIG.WHATSAPP_LABEL;
+  $('#print-fallback').hidden = true;
+  show('s-report');
+}
+
+/* O material que resolve a trava da pessoa ganha selo. Os outros dois continuam
+   à mostra: quem chegou até aqui costuma querer os três. */
+function renderMateriais(travaId){
+  const sec = $('#r-mats');
+  if(!MATERIAIS.length){ sec.hidden = true; return; }
+  sec.hidden = false;
+  $('#mats-list').innerHTML = MATERIAIS.map(m => {
+    const selo = m.para && m.para === travaId;
+    const abs = new URL(m.href, location.href).href;
+    const modo = m.baixar
+      ? ` download="${esc(m.nome || '')}"`
+      : ' target="_blank" rel="noopener"';
+    return `<article class="mat">
+      <div>
+        <p class="mat-tipo">${esc(m.tipo)}${selo ? ' · <span class="mat-tag">resolve a sua trava</span>' : ''}</p>
+        <h4>${esc(m.titulo)}</h4>
+        <p class="mat-desc">${esc(m.desc)}</p>
+        <p class="mat-url" hidden>${esc(abs)}</p>
+      </div>
+      <a class="mat-get" href="${esc(m.href)}"${modo}>Baixar</a>
+    </article>`;
+  }).join('');
+}
+
+/* onda amortecida: o ponto cheio marca onde a operação estabiliza de verdade;
+   o anel vazado marca até onde a ferramenta promete chegar. A distância é o gap. */
+function drawWave(min, max){
+  const W = 720, H = 132, mid = 88, A = 54, pad = 40, span = W - pad*2, base = 120;
+  const X = l => pad + span*(0.14 + 0.275*l);
+  const y = t => mid - A*Math.exp(-3.1*t)*Math.sin(2*Math.PI*2.15*t);
+  let full = '', solid = '';
+  for(let p = 0; p <= 300; p++){
+    const t = p/300, x = pad + span*t, Y = y(t).toFixed(1);
+    full += (p ? 'L' : 'M') + x.toFixed(1) + ' ' + Y;
+    if(x <= X(min)) solid += (solid ? 'L' : 'M') + x.toFixed(1) + ' ' + Y;
+  }
+  const xs = X(min), xa = X(max), ys = y((xs - pad)/span), ya = y((xa - pad)/span), off = max > min;
+  $('#wave').innerHTML =
+   `<path class="w-ghost" d="${full}"/>
+    <path class="w-solid" d="${solid}"/>` +
+   (off ? `<line class="w-drop" x1="${xs}" y1="${ys + 12}" x2="${xs}" y2="${base}"/>
+    <line class="w-drop" x1="${xa}" y1="${ya + 12}" x2="${xa}" y2="${base}"/>
+    <line class="w-span" x1="${xs}" y1="${base}" x2="${xa}" y2="${base}"/>
+    <circle class="w-ring" cx="${xa}" cy="${ya}" r="7"/>` : '') +
+   `<circle class="w-dot" cx="${xs}" cy="${ys}" r="7"/>`;
+  $('#wave').setAttribute('aria-label',
+    off ? `Curva de maturidade: operação estabiliza em ${ONDAS[min].n}, ferramenta promete ${ONDAS[max].n}.`
+        : `Curva de maturidade: operação e ferramenta no mesmo ponto, ${ONDAS[min].n}.`);
+}
+
+/* Alguns contextos embutidos ignoram window.print() sem avisar. Se o evento
+   beforeprint não vier, mostramos o caminho manual em vez de não fazer nada. */
+let printStarted = false;
+window.addEventListener('beforeprint', () => { printStarted = true; });
+function toPDF(){
+  printStarted = false;
+  $('#print-fallback').hidden = true;
+  try { window.print(); } catch(e){}
+  setTimeout(() => { if(!printStarted) $('#print-fallback').hidden = false; }, 500);
+}
+
+document.addEventListener('keydown', e => {
+  if($('#s-form').classList.contains('on')){
+    if(e.key === 'Enter'){ e.preventDefault(); submit(); }
+    return;
+  }
+  if(!$('#s-q').classList.contains('on')) return;
+  const n = parseInt(e.key, 10);
+  if(n >= 1 && n <= 4) pick(n - 1);
+  if(e.key === 'Enter' && ans[i] !== null) next();
+});
+
+/* handlers inline dependem do escopo global */
+Object.assign(window, {go, pick, next, prev, restart, submit, toPDF});
+</script>
