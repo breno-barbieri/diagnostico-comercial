@@ -123,19 +123,12 @@ export default function Formulario({ turma }: { turma: string }) {
           <>
             <h1 className="text-2xl">Diagnóstico comercial</h1>
             <p className="text-grafite/75">{config.avisoIdentificacao}</p>
-            {(["nome", "empresa", "cargo", "email", "whatsapp"] as const).map((k) => (
+            {(["nome", "empresa", "cargo"] as const).map((k) => (
               <label key={k} className="block">
-                <span className="mb-1 block text-sm capitalize">{k === "email" ? "E-mail" : k === "whatsapp" ? "WhatsApp" : k}</span>
+                <span className="mb-1 block text-sm capitalize">{k}</span>
                 <input className="input" value={r.identificacao[k]} onChange={(e) => setR({ ...r, identificacao: { ...r.identificacao, [k]: e.target.value } })} />
               </label>
             ))}
-            <label className="block">
-              <span className="mb-1 block text-sm">Faturamento mensal</span>
-              <select className="input" value={r.identificacao.faturamento} onChange={(e) => setR({ ...r, identificacao: { ...r.identificacao, faturamento: e.target.value } })}>
-                <option value="">Prefiro não informar</option>
-                {config.faturamento.map((f) => <option key={f}>{f}</option>)}
-              </select>
-            </label>
             {Object.values(r.identificacao).some((x) => x.trim() !== "") && (
               <label className="flex items-start gap-3 rounded-lg bg-nevoa/40 p-3">
                 <input type="checkbox" className="mt-1 h-5 w-5" checked={r.consentimento} onChange={(e) => setR({ ...r, consentimento: e.target.checked })} />
