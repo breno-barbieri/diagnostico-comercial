@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body { @apply bg-papel text-tinta antialiased; }
+h1, h2 { @apply font-display tracking-tight; }
+.card { @apply rounded-lg border border-nevoa bg-transparent p-5; }
+.rotulo { @apply text-[11px] uppercase tracking-[0.3em] text-bronze; }
+.regua { @apply h-px w-12 bg-bronze; }
+.btn { @apply rounded-md bg-tinta px-5 py-3 font-medium text-papel disabled:opacity-40; }
+.btn-sec { @apply rounded-md border border-grafite/40 bg-transparent px-5 py-3 font-medium text-tinta disabled:opacity-40; }
+.input { @apply w-full rounded-md border border-grafite/30 bg-white/50 px-3 py-2.5; }
+.input:focus { @apply outline-none border-tinta; }
+
+@media print {
+  .no-print { display: none !important; }
+  body { background: white; }
+  .card { break-inside: avoid; }
+}
+@page { size: A4; margin: 14mm; }

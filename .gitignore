@@ -3,3 +3,14 @@
 __pycache__/
 *.pyc
 .env*
+*.tsbuildinfo
+node_modules
+.next
+data
+*.db
+*.db-shm
+*.db-wal
+!.env.example
+supabase/.temp
+supabase/.branches
+.playwright-mcp

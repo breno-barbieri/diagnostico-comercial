@@ -1,0 +1,19 @@
+name: build
+
+# public/index.html é gerado e commitado, então pode divergir de src/ se
+# alguém editar o template e esquecer de rodar o build. Este job barra isso.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  gerado-em-dia:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: public/index.html está em dia com src/
+        run: python3 build.py --check

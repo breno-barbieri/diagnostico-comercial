@@ -1,0 +1,20 @@
+export function Onda({ className = "", cor = "currentColor" }: { className?: string; cor?: string }) {
+  return (
+    <svg viewBox="0 0 164 56" className={className} role="img" aria-label="Breno Barbieri" fill="none">
+      <path d="M8.0 18.9 L10.0 15.1 L12.0 12.5 L14.0 11.4 L16.0 11.4 L18.0 12.6 L20.0 14.7 L22.0 17.4 L24.0 20.6 L26.0 23.9 L28.0 27.1 L30.0 30.1 L32.0 32.5 L34.0 34.4 L36.0 35.7 L38.0 36.3 L40.0 36.2 L42.0 35.7 L44.0 34.6 L46.0 33.2 L48.0 31.7 L50.0 30.0 L52.0 28.4 L54.0 27.0 L56.0 25.7 L58.0 24.8 L60.0 24.2 L62.0 23.9 L64.0 23.9 L66.0 24.2 L68.0 24.7 L70.0 25.4 L72.0 26.2 L74.0 27.0 L76.0 27.8 L78.0 28.5 L80.0 29.1 L82.0 29.6 L84.0 29.9 L86.0 30.0 L88.0 30.0 L90.0 29.9 L92.0 29.6 L94.0 29.3 L96.0 28.9 L98.0 28.5 L100.0 28.1 L102.0 27.7 L104.0 27.4 L106.0 27.2 L108.0 27.1 L110.0 27.0 L112.0 27.0 L114.0 27.1 L116.0 27.2 L118.0 27.4 L120.0 27.5 L122.0 27.8 L124.0 27.9 L126.0 28.1 L128.0 28.3 L130.0 28.4 L132.0 28.5 L134.0 28.5 L136.0 28.5 L138.0 28.5 L140.0 28.4 L142.0 28.3 L144.0 28.2 L146.0 28.1 L148.0 28.0 L150.0 27.9 L152.0 27.9 L152.0 28.0" stroke={cor} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="155" cy="28" r="3.6" fill="#A07C4B" />
+    </svg>
+  );
+}
+
+// Assinatura vertical: onda sobre o nome, descritor a partir de ~120 px.
+export function Assinatura({ className = "", negativo = false, descritor = true }: { className?: string; negativo?: boolean; descritor?: boolean }) {
+  const cor = negativo ? "#F2F0EC" : "#0E0E10";
+  return (
+    <div className={`inline-flex flex-col items-center ${className}`} style={{ color: cor }}>
+      <Onda className="w-32" cor={cor} />
+      <div className="font-display text-2xl leading-none tracking-tight">Breno Barbieri</div>
+      {descritor && <div className="mt-2 text-[10px] uppercase tracking-[0.4em]">Inteligência comercial</div>}
+    </div>
+  );
+}
