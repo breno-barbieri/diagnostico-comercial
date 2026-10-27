@@ -58,8 +58,6 @@ export default function PainelView({ turma }: { turma: string }) {
 
   if (!d) return <main className="min-h-screen bg-tinta p-12 text-3xl text-papel">Carregando...</main>;
 
-  const maxNivel = Math.max(1, ...d.niveis.map((n) => n.qtd));
-  const nivelTop = d.niveis.reduce((a, b) => (b.qtd > a.qtd ? b : a), d.niveis[0]);
   const maxPerc = Math.max(1, ...d.percepcaoVsDado.flatMap((p) => [p.percepcao, p.dado]));
   const maxRit = Math.max(1, ...d.rituais.map((r) => r.qtd));
   const campos = d.camposIncertos.filter((c) => c.base > 0);
@@ -70,7 +68,6 @@ export default function PainelView({ turma }: { turma: string }) {
   const kpis: { rotulo: string; valor: string; apoio?: string; grande?: boolean }[] = [
     { rotulo: "Respostas", valor: String(d.total), apoio: d.total === 1 ? "empresa respondeu" : "empresas responderam", grande: true },
   ];
-  if (config.exibicao.maturidade) kpis.push({ rotulo: "Nível mais comum", valor: nivelTop.qtd > 0 ? nivelTop.nome : "-", apoio: nivelTop.qtd > 0 ? `${nivelTop.qtd} de ${d.total}` : undefined });
   if (config.exibicao.margemContraGasto) {
     kpis.push({
       rotulo: "Gasto por venda acima da margem",
@@ -79,7 +76,7 @@ export default function PainelView({ turma }: { turma: string }) {
       grande: true,
     });
   }
-  kpis.push({ rotulo: "Com números reais", valor: `${d.baseEtapas.comNumerosReais} de ${d.total}`, apoio: "empresas com números reais em alguma etapa do funil" });
+  kpis.push({ rotulo: "Com números reais", valor: `${d.baseEtapas.comNumerosReais} de ${d.total}`, apoio: `${d.baseEtapas.comNumerosReais === 1 ? "empresa" : "empresas"} com números reais em alguma etapa do funil` });
   kpis.push({
     rotulo: "Etapa prioritária para investigar",
     valor: etapaTopo ? (etapaTopo.empate ? config.painel.empate : etapaTopo.etapas[0].rotulo) : "-",
@@ -135,20 +132,6 @@ export default function PainelView({ turma }: { turma: string }) {
                     <div className="mt-2 text-base text-papel/50">
                       {c.n} {c.n === 1 ? "empresa informou" : "empresas informaram"}, {c.nReais} com números reais
                     </div>
-                  </div>
-                ))}
-              </div>
-            </Secao>
-            )}
-
-            {config.exibicao.maturidade && (
-            <Secao n={num()} titulo="Nível de maturidade" className="lg:col-span-5">
-              <div className="flex h-72 items-end gap-5">
-                {d.niveis.map((n) => (
-                  <div key={n.nome} className="flex h-full flex-1 flex-col justify-end">
-                    <div className="mb-2 text-center font-display text-5xl">{n.qtd}</div>
-                    <div className="w-full rounded-t-sm bg-papel transition-all duration-700" style={{ height: `${Math.max(n.qtd ? 4 : 0, (n.qtd / maxNivel) * 100)}%`, opacity: n.qtd ? 1 : 0.15 }} />
-                    <div className="mt-3 h-12 text-center text-lg leading-tight text-papel/80">{n.nome}</div>
                   </div>
                 ))}
               </div>

@@ -22,11 +22,6 @@ const mediana = (xs: number[]): number | null => {
 // Só números consolidados. Nenhuma resposta individual nem nome sai daqui.
 export function agregar(regs: Registro[]) {
   const total = regs.length;
-  const niveis = config.niveis.map((n) => ({
-    nome: n.nome,
-    qtd: regs.filter((r) => r.nivel === n.nome).length,
-  }));
-
   const camposIncertos = config.campos.map((c) => {
     const base = regs.filter((r) => r.marcas[c.id] !== undefined && r.marcas[c.id] !== "nao_se_aplica");
     const incertos = base.filter((r) => r.marcas[c.id] !== "real").length;
@@ -95,7 +90,6 @@ export function agregar(regs: Registro[]) {
 
   return {
     total,
-    niveis,
     conversaoTurma,
     camposIncertos,
     percepcaoVsDado,
