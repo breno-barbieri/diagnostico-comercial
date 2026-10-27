@@ -154,7 +154,9 @@ export function montarDevolutiva(r: Respostas, res: Resultado) {
     }
   }
   const nota = pag === "recorrente" ? D.paga.notaCadaCliente : D.paga.notaCadaVenda;
-  const notaCadaVenda = E !== null && F !== null ? fmt(nota, { E: brl(E), F: n1(F) }) : null;
+  // A frase do gasto fixo só vale quando a seção mostra "Faltaram para cobrir" (avulsa e recompra).
+  const mostraFalta = pag !== "recorrente" && finito(res.diferencaMes) && res.diferencaMes < 0;
+  const notaCadaVenda = E !== null && F !== null ? `${fmt(nota, { E: brl(E), F: n1(F) })}${mostraFalta ? ` ${D.paga.notaGastoFixo}` : ""}` : null;
   const notaGastoPorVenda = finito(res.gastoPorVenda) ? fmt(D.paga.notaGastoPorVenda, { valor: brl(res.gastoPorVenda) }) : null;
 
   // 5. Como sua operação funciona hoje

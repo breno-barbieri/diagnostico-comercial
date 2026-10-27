@@ -514,9 +514,11 @@ export const config = {
       coerencia:
         "Com {churn}% de cancelamento ao mês, o cliente ficaria em média {implicito} meses. Você informou {k}. Vale conferir os dois números.",
       notaCadaVenda:
-        "\"Cada venda deixa\" é o ticket ({E}) vezes a margem que sobra depois de custo, impostos e comissão ({F}%). Parte do gasto comercial é fixa, então vender mais não aumenta o prejuízo na mesma proporção.",
+        "\"Cada venda deixa\" é o ticket ({E}) vezes a margem que sobra depois de custo, impostos e comissão ({F}%).",
+      // Só aparece quando a seção mostra "Faltaram para cobrir" (avulsa e recompra).
+      notaGastoFixo: "Parte do gasto comercial é fixa, então vender mais não aumenta o prejuízo na mesma proporção.",
       notaCadaCliente:
-        "\"Cada cliente deixa por mês\" é a mensalidade ({E}) vezes a margem que sobra depois de custo, impostos e comissão ({F}%). Parte do gasto comercial é fixa, então vender mais não aumenta o prejuízo na mesma proporção.",
+        "\"Cada cliente deixa por mês\" é a mensalidade ({E}) vezes a margem que sobra depois de custo, impostos e comissão ({F}%).",
       notaComissao: "Confira se a comissão não foi contada duas vezes: na margem e no gasto.",
       notaGastoPorVenda: "Gasto para vender, por venda: {valor}. Não é CAC, porque inclui vendas para clientes antigos.",
     },
