@@ -349,6 +349,41 @@ export const config = {
 
   // Textos do painel da turma que não vêm de outras seções.
   painel: {
+    titulo: "O que os números da turma mostram",
+    respostas: "{n} empresas responderam",
+    umaResposta: "1 empresa respondeu",
+    atualiza: "atualiza a cada 10 segundos",
+    aguardando: "Aguardando as primeiras respostas.",
+    medicao: {
+      rotulo: "01 · Medição",
+      frase: "dos números da turma **não eram reais**: foram estimados ou ninguém sabia.",
+      base: "Base: {empresas}, {numeros} números informados.",
+      porEtapa: "Estimado ou desconhecido, por etapa do funil",
+      economia: "Economia",
+    },
+    perde: {
+      rotulo: "02 · Onde a turma perde",
+      titulo: "Percepção x números",
+      fraseDiverge: "A maioria acha que perde em **{acha}**. Os números apontam **{dado}**.",
+      fraseCoincide: "A maioria acha que perde em **{acha}**, e os números apontam a mesma etapa.",
+      fraseSemDado: "A maioria acha que perde em **{acha}**. Os números ainda não apontam uma etapa.",
+      fraseEmpate: "A maioria acha que perde em **{acha}**. Os números se dividem entre **{dado}**.",
+      acha: "A turma acha que perde em",
+      apontam: "Os números apontam",
+      semEtapa: "nenhuma etapa ainda",
+      baseAcha: "{qtd} de {total} empresas",
+      baseDado: "{qtd} de {reais} empresas com números reais",
+      semApontada: "{n} empresas não tiveram etapa apontada por usar números estimados ou números que não afunilam.",
+      umaSemApontada: "1 empresa não teve etapa apontada por usar números estimados ou números que não afunilam.",
+    },
+    frente: {
+      rotulo: "03 · Próximas 4 semanas",
+      titulo: "Qual frente você vai priorizar?",
+      frase: "A turma escolheu **{frente}**. Primeiro passo: {passo}",
+      fraseEmpate: "A turma se dividiu entre **{frentes}**.",
+      semResposta: "Ninguém respondeu a essa pergunta ainda.",
+      nota: "Resposta da última pergunta do diagnóstico.",
+    },
     empate: "Empate",
     empresaCada: "{qtd} empresa cada",
     empresasCada: "{qtd} empresas cada",
@@ -585,6 +620,16 @@ export const config = {
     },
 
     semValores: "Os valores em reais e volumes ficam só no navegador onde você respondeu. Aqui aparecem apenas as razões entre as etapas.",
+  },
+
+  // Pergunta final: frente a priorizar (aparece no fim do formulário e no painel).
+  frente: {
+    pergunta: "Qual frente você vai priorizar nas próximas 4 semanas?",
+    opcoes: [
+      { valor: "funil", rotulo: "Funil", passo: "anotar os números reais do funil toda semana." },
+      { valor: "economia", rotulo: "Economia da venda", passo: "confirmar a margem e o gasto comercial com números reais." },
+      { valor: "rotina", rotulo: "Rotina", passo: "marcar um ritual semanal para olhar os números com o time." },
+    ],
   },
 
   // Compromisso das próximas semanas. Os seis campos seguem o roteiro da aula.

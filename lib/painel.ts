@@ -88,8 +88,36 @@ export function agregar(regs: Registro[]) {
     qtd: regs.filter((r) => r.ponte.rituais.includes(o.valor)).length,
   }));
 
+  // Medição da turma: quantos números informados não eram reais.
+  const funilIds = ["A", "B", "C", "D"];
+  let informados = 0, incertos = 0, ecoBase = 0, ecoIncertos = 0;
+  for (const r of regs) {
+    for (const [id, m] of Object.entries(r.marcas ?? {})) {
+      if (m === "nao_se_aplica") continue;
+      informados++;
+      if (m !== "real") incertos++;
+      if (!funilIds.includes(id)) { ecoBase++; if (m !== "real") ecoIncertos++; }
+    }
+  }
+  const medicao = {
+    informados,
+    pct: informados ? Math.round((incertos / informados) * 100) : 0,
+    funil: camposIncertos.filter((c) => funilIds.includes(c.id) && c.base > 0).map((c) => ({ id: c.id, pct: c.pct })),
+    economia: ecoBase ? Math.round((ecoIncertos / ecoBase) * 100) : null,
+  };
+
+  // Onde a turma acha que perde: a resposta mais comum (sem "não sei").
+  const achaRanking = Object.entries(perc).filter(([k]) => k !== "nao_sei" && k !== "sem_dado").sort((a, b) => b[1] - a[1]);
+  const acha = achaRanking[0] ? { etapa: achaRanking[0][0], rotulo: config.devolutiva.setaPercepcao[achaRanking[0][0]] ?? achaRanking[0][0], qtd: achaRanking[0][1] } : null;
+
+  // Frente escolhida para as próximas 4 semanas.
+  const frentes = config.frente.opcoes.map((o) => ({ valor: o.valor, rotulo: o.rotulo, passo: o.passo, qtd: regs.filter((r) => r.frente === o.valor).length }));
+
   return {
     total,
+    medicao,
+    acha,
+    frentes,
     conversaoTurma,
     camposIncertos,
     percepcaoVsDado,

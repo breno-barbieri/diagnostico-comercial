@@ -11,7 +11,7 @@ const marca = (): Marca => {
 };
 
 async function main() {
-await apagarTurma("demo");
+await apagarTurma(process.env.TURMA ?? "demo");
 for (let i = 0; i < 30; i++) {
   const pagamentoEscolhido = pick(config.contexto[0].opcoes).valor;
   const operacao = pagamentoEscolhido === "misto" ? pick(config.operacaoMista.opcoes) : undefined;
@@ -36,7 +36,7 @@ for (let i = 0; i < 30; i++) {
   const r: Respostas = {
     identificacao: { nome: "", empresa: "", cargo: "", email: "", whatsapp: "", faturamento: "" },
     consentimento: false,
-    turma: "demo",
+    turma: process.env.TURMA ?? "demo",
     contexto: {
       pagamento: pagamentoEscolhido,
       ...(operacao ? { operacao } : {}),
@@ -54,10 +54,11 @@ for (let i = 0; i < 30; i++) {
     },
     gargalosConfirmados: [],
     compromisso: { ...COMPROMISSO_VAZIO },
+    frente: pick(config.frente.opcoes).valor,
   };
   const res = calcular(r);
   await inserir(montarRegistro(r, res));
 }
-console.log("30 respostas fictícias inseridas na turma demo. Abra /painel?turma=demo");
+console.log("30 respostas fictícias inseridas. Abra /painel?turma= com o nome da turma");
 }
 main();

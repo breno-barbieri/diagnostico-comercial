@@ -46,6 +46,7 @@ export async function POST(req: Request) {
     ponte: body.ponte,
     gargalosConfirmados: body.gargalosConfirmados ?? [],
     compromisso: limparCompromisso(body.compromisso),
+    frente: ["funil", "economia", "rotina"].includes(body.frente) ? body.frente : "",
     identificacao: body.consentimento ? body.identificacao : null,
     consentimento: !!body.consentimento && !!body.identificacao,
   };

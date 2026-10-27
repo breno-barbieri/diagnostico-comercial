@@ -21,6 +21,7 @@ export type Registro = {
   ponte: Respostas["ponte"];
   gargalosConfirmados: string[];
   compromisso: Compromisso;
+  frente: string;
   identificacao: Respostas["identificacao"] | null;
   consentimento: boolean;
 };
@@ -63,6 +64,7 @@ export function montarRegistro(r: Respostas, res: Resultado): Registro {
     ponte: r.ponte,
     gargalosConfirmados: r.gargalosConfirmados,
     compromisso: r.compromisso,
+    frente: r.frente ?? "",
     identificacao: identificado ? i : null,
     consentimento: identificado ? r.consentimento : false,
   };

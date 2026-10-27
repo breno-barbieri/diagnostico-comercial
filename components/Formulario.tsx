@@ -29,6 +29,7 @@ export default function Formulario({ turma }: { turma: string }) {
     ponte: { rituais: [], clienteIdeal: "", clienteIdealTexto: "", dependencia: "" },
     gargalosConfirmados: [],
     compromisso: { ...COMPROMISSO_VAZIO },
+    frente: "",
   });
 
   const pagamento = pagamentoEfetivo(r.contexto);
@@ -275,6 +276,15 @@ export default function Formulario({ turma }: { turma: string }) {
 
         {passo === 5 && (
           <>
+            <fieldset className="space-y-2">
+              <legend className="mb-1 font-medium">{config.frente.pergunta}</legend>
+              {config.frente.opcoes.map((o) => (
+                <label key={o.valor} className="flex items-center gap-3 rounded-lg border border-nevoa p-3">
+                  <input type="radio" name="frente" className="h-5 w-5" checked={r.frente === o.valor} onChange={() => setR({ ...r, frente: o.valor })} />
+                  {o.rotulo}
+                </label>
+              ))}
+            </fieldset>
             <fieldset className="space-y-3">
               <legend className="mb-1 text-lg font-display">{config.compromisso.titulo}</legend>
               <p className="text-sm text-grafite/75">{config.compromisso.instrucao}</p>

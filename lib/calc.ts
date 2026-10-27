@@ -31,6 +31,7 @@ export type Respostas = {
   };
   gargalosConfirmados: string[];
   compromisso: Compromisso;
+  frente?: string;
 };
 
 export type Conversao = { pct: number | null; faixa: Faixa | null; esperado: number | null };
