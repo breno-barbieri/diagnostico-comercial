@@ -403,6 +403,27 @@ export const config = {
       I: "clientes ativos estimados", J: "cancelamentos estimados", K: "tempo de permanência estimado", L: "recompras estimadas",
     } as Record<string, string>,
     avisoEstimado: "({lista}: confirme)",
+    // Aviso único por seção: "A margem foi estimada. Confirme antes de decidir."
+    avisoSecao: {
+      texto: "{sujeito} {verbo} {participio}. Confirme antes de decidir.",
+      verboUm: "foi",
+      verboVarios: "foram",
+      participio: { m: "estimado", f: "estimada", mp: "estimados", fp: "estimadas" },
+      campos: {
+        A: { nome: "contatos", artigo: "Os", fem: false, pl: true },
+        B: { nome: "atendimentos", artigo: "Os", fem: false, pl: true },
+        C: { nome: "orçamentos", artigo: "Os", fem: false, pl: true },
+        D: { nome: "vendas", artigo: "As", fem: true, pl: true },
+        E: { nome: "ticket", artigo: "O", fem: false, pl: false },
+        F: { nome: "margem", artigo: "A", fem: true, pl: false },
+        G: { nome: "gasto", artigo: "O", fem: false, pl: false },
+        H: { nome: "ciclo", artigo: "O", fem: false, pl: false },
+        I: { nome: "clientes ativos", artigo: "Os", fem: false, pl: true },
+        J: { nome: "cancelamentos", artigo: "Os", fem: false, pl: true },
+        K: { nome: "tempo que o cliente fica", artigo: "O", fem: false, pl: false },
+        L: { nome: "recompras", artigo: "As", fem: true, pl: true },
+      } as Record<string, { nome: string; artigo: string; fem: boolean; pl: boolean }>,
+    },
     // Nome de cada número na lista "O que você ainda não mede".
     campoRotulo: {
       A: "Contatos", B: "Atendimentos", C: "Orçamentos", D: "Vendas",
@@ -483,6 +504,7 @@ export const config = {
       mesesPagar: "meses para pagar o custo de cada cliente",
       mesesFica: "meses que o cliente fica, em média",
       porVenda: "Cada venda deixa, depois dos custos",
+      porClienteMes: "Cada cliente deixa por mês, depois dos custos",
       noMes: "No mês, as vendas deixaram",
       custo: "Vender custou no mês",
       faltaram: "Faltaram para cobrir",
@@ -493,6 +515,8 @@ export const config = {
         "Com {churn}% de cancelamento ao mês, o cliente ficaria em média {implicito} meses. Você informou {k}. Vale conferir os dois números.",
       notaCadaVenda:
         "\"Cada venda deixa\" é o ticket ({E}) vezes a margem que sobra depois de custo, impostos e comissão ({F}%). Parte do gasto comercial é fixa, então vender mais não aumenta o prejuízo na mesma proporção.",
+      notaCadaCliente:
+        "\"Cada cliente deixa por mês\" é a mensalidade ({E}) vezes a margem que sobra depois de custo, impostos e comissão ({F}%). Parte do gasto comercial é fixa, então vender mais não aumenta o prejuízo na mesma proporção.",
       notaComissao: "Confira se a comissão não foi contada duas vezes: na margem e no gasto.",
       notaGastoPorVenda: "Gasto para vender, por venda: {valor}. Não é CAC, porque inclui vendas para clientes antigos.",
     },
@@ -532,6 +556,7 @@ export const config = {
       medir: "Anote toda semana os números reais de contatos, atendimentos, orçamentos e vendas no controle semanal.",
       escolher: "Escolha a etapa que mais pesa no seu faturamento e anote o número dela toda semana no controle semanal.",
       conferir: "Confira os números do funil do último mês e refaça o diagnóstico com a base corrigida.",
+      confirmarEconomia: "Confirme a sua margem de contribuição e o gasto comercial com números reais antes de mexer em preço ou gasto.",
     },
 
     // 8. Seu compromisso

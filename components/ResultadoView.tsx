@@ -4,7 +4,7 @@ import { Fragment, useEffect, useState } from "react";
 import { Assinatura } from "./Marca";
 import { config, type Etapa } from "../diagnostico.config";
 import { COMPROMISSO_VAZIO, ETAPAS, type Respostas, type Resultado } from "../lib/calc";
-import { fmt, montarDevolutiva, n0, n1 } from "../lib/devolutiva";
+import { fmt, maiuscula, montarDevolutiva, n0, n1, taxa10 } from "../lib/devolutiva";
 
 type Local = { respostas: Respostas; resultado: Resultado };
 type Remoto = {
@@ -62,7 +62,6 @@ export default function ResultadoView({ id }: { id: string }) {
   const esperado = (e: Etapa): number | null => (res ? res.conversoes[e].esperado : remoto!.esperados?.[e] ?? null);
   const semDadoReal: Etapa[] = res ? res.etapasSemDadoReal : ETAPAS.filter((e) => remoto!.conversaoReal?.[e] === false);
   const incoerencia = res?.incoerencias[0] ?? null;
-  const deCadaDez = (p: number | null) => (p === null || !Number.isFinite(p) ? null : Math.max(0, Math.min(10, Math.round(p / 10))));
 
   const compBruto = local?.respostas.compromisso ?? remoto!.compromisso;
   const comp: Respostas["compromisso"] = typeof compBruto === "string" ? { ...COMPROMISSO_VAZIO, numero: compBruto } : { ...COMPROMISSO_VAZIO, ...compBruto };
@@ -76,9 +75,13 @@ export default function ResultadoView({ id }: { id: string }) {
         ? [...D.etapas[gargalo].acoes]
         : [semDadoReal.length > 0 ? D.semana.medir : D.semana.escolher];
     const prefixoMedir = config.acoes.medirEtapa.split("{etapas}")[0];
-    for (const a of res?.acoes ?? []) {
+    const economiaEstimada = ["E", "F", "G"].some((k) => local?.respostas.campos[k]?.marca === "estimado");
+    for (const bruta of res?.acoes ?? []) {
       if (lista.length >= D.semana.maximo) break;
-      if (a.startsWith(prefixoMedir) || Object.values(config.acoes.gargalo).includes(a)) continue;
+      if (bruta.startsWith(prefixoMedir) || Object.values(config.acoes.gargalo).includes(bruta)) continue;
+      // Ação de economia apoiada em número estimado: primeiro confirmar os números.
+      const ehEconomia = bruta === config.acoes.naoPagaAvulsa || bruta === config.acoes.naoPagaVida;
+      const a = ehEconomia && economiaEstimada ? D.semana.confirmarEconomia : bruta;
       if (!lista.includes(a)) lista.push(a);
     }
     return lista.slice(0, D.semana.maximo);
@@ -88,7 +91,7 @@ export default function ResultadoView({ id }: { id: string }) {
   const linhasEtapas = dev
     ? dev.etapas
     : ETAPAS.map((e) => {
-        const xe = deCadaDez(pct(e));
+        const xe = taxa10(pct(e));
         const ye = esperado(e) !== null ? esperado(e)! / 10 : null;
         return { etapa: e, seta: D.etapas[e].seta, naoSeAplica: false, x: xe, y: ye, aviso: null as string | null, mostrar: xe !== null };
       }).filter((l) => l.mostrar);
@@ -101,10 +104,9 @@ export default function ResultadoView({ id }: { id: string }) {
   const q = "mb-1 text-[11px] uppercase tracking-[0.24em] text-bronze";
   const nota = "mt-2 text-[12.5px] leading-[1.45] text-grafite/60";
   const alerta = "mt-2.5 border-l-2 border-bronze bg-bronze/10 px-[11px] py-[9px] text-[13.5px] leading-[1.45]";
-  const estClaro = "block text-xs text-bronze";
   const lin = "grid grid-cols-[1fr_auto] items-center gap-1.5 border-t border-nevoa py-[9px] text-[14.5px]";
 
-  const x = gargalo ? deCadaDez(pct(gargalo)) : null;
+  const x = gargalo ? taxa10(pct(gargalo)) : null;
   const y = gargalo && esperado(gargalo) !== null ? esperado(gargalo)! / 10 : null;
   const primeiraAcao = acoes[0] ? minuscula(acoes[0]) : null;
 
@@ -129,7 +131,7 @@ export default function ResultadoView({ id }: { id: string }) {
           <p className="mb-2.5 text-[15px] leading-normal">{semDadoReal.length > 0 ? D.resumo.semEtapaEstimado.texto : D.resumo.semEtapaAbaixo.texto}</p>
         )}
         {gargalo && x !== null && y !== null && (
-          <p className="mb-2.5 text-[15px] leading-normal"><Rico texto={fmt(D.resumo.linhaEtapa, { itens: D.etapas[gargalo].itens, x, proxima: D.etapas[gargalo].proxima, y })} /></p>
+          <p className="mb-2.5 text-[15px] leading-normal"><Rico texto={fmt(D.resumo.linhaEtapa, { itens: D.etapas[gargalo].itens, x: n1(x), proxima: D.etapas[gargalo].proxima, y: n1(y) })} /></p>
         )}
         {dev?.pagar && (
           <p className="mb-2.5 text-[15px] leading-normal">
@@ -141,9 +143,7 @@ export default function ResultadoView({ id }: { id: string }) {
           <p className="mb-2.5 text-[15px] leading-normal">
             <Rico texto={fmt(D.resumo.linhaRecorrente, { m: dev.recorrente.m })} />
             {dev.recorrente.k !== null && fmt(D.resumo.linhaRecorrenteFica, { k: n1(dev.recorrente.k) })}
-            {(dev.recorrente.aviso || (dev.recorrente.k !== null && dev.recorrente.avisoK)) && (
-              <span className="ml-1 text-xs text-[#cdb58f]">{[dev.recorrente.aviso, dev.recorrente.k !== null ? dev.recorrente.avisoK : null].filter(Boolean).join(" ")}</span>
-            )}
+            {dev.recorrente.aviso && <span className="ml-1 text-xs text-[#cdb58f]">{dev.recorrente.aviso}</span>}
           </p>
         )}
         {primeiraAcao && <p className="text-[15px] leading-normal">{fmt(D.resumo.linhaSemana, { acao: primeiraAcao })}</p>}
@@ -166,7 +166,6 @@ export default function ResultadoView({ id }: { id: string }) {
                 {dev.perde.c && fmt(D.perde.precisou, { c: dev.perde.c })}
                 {dev.perde.e !== null && (dev.perde.e === "menos" ? D.perde.esperavaMenos : fmt(D.perde.esperava, { e: dev.perde.e }))}
               </p>
-              {dev.perde.aviso && <span className={estClaro}>{dev.perde.aviso}</span>}
             </>
           )}
           <div className="mt-3">
@@ -175,18 +174,17 @@ export default function ResultadoView({ id }: { id: string }) {
               return (
                 <div key={l.etapa} className={`${lin} ${prioridade ? "font-semibold" : ""}`}>
                   <span>
-                    <span className="first-letter:uppercase">{l.seta}</span>
+                    <span>{maiuscula(l.seta)}</span>
                     {prioridade && <span className="ml-1.5 inline-block rounded-full border border-bronze px-2 text-[11px] font-normal text-bronze">{D.perde.prioridade}</span>}
-                    {l.aviso && <span className={estClaro}>{l.aviso}</span>}
                   </span>
                   <span className="text-right">
                     {l.naoSeAplica ? (
                       <span className="text-[13px] font-normal text-grafite/60">{D.perde.naoSeAplica}</span>
                     ) : (
                       <>
-                        <b className={`font-display text-lg font-normal ${prioridade ? "text-bronze" : ""}`}>{l.x}</b>
+                        <b className={`font-display text-lg font-normal ${prioridade ? "text-bronze" : ""}`}>{l.x !== null ? n1(l.x) : ""}</b>
                         {" de 10"}
-                        {l.y !== null && <em className="font-normal not-italic text-grafite/60"> {fmt(D.perde.esperavaEtapa, { y: l.y })}</em>}
+                        {l.y !== null && <em className="font-normal not-italic text-grafite/60"> {fmt(D.perde.esperavaEtapa, { y: n1(l.y) })}</em>}
                       </>
                     )}
                   </span>
@@ -194,9 +192,16 @@ export default function ResultadoView({ id }: { id: string }) {
               );
             })}
           </div>
+          {dev?.avisoPerde && <p className="mt-2 text-[12.5px] leading-[1.45] text-bronze">{dev.avisoPerde}</p>}
           {gargalo && <p className={nota}>{D.perde.notaPrioridade}</p>}
-          {dev?.pequenos && <div className={alerta}>{dev.pequenos}</div>}
-          <p className={nota}>{D.perde.notaMes}</p>
+          {dev?.pequenos ? (
+            <div className={alerta}>
+              <p>{dev.pequenos}</p>
+              <p className="mt-1.5 text-[12.5px] text-grafite/70">{D.perde.notaMes}</p>
+            </div>
+          ) : (
+            <p className={nota}>{D.perde.notaMes}</p>
+          )}
           {res?.alertasBase.map((a) => <div key={a} className={alerta}>{a}</div>)}
         </section>
       )}
@@ -249,7 +254,6 @@ export default function ResultadoView({ id }: { id: string }) {
                   <div className="flex-1 rounded-lg bg-nevoa/45 px-2.5 py-3 text-center">
                     <b className="block font-display text-[30px] font-normal">{n0(dev.pagar.n)}</b>
                     <span className="text-[12.5px] text-grafite/75">{dev.pagar.n === 1 ? D.paga.umaVendaPaga : D.paga.vendasPagam}</span>
-                    {dev.pagar.aviso && <span className="mt-0.5 block text-xs text-bronze">{dev.pagar.aviso}</span>}
                   </div>
                   <div className="flex-1 rounded-lg bg-tinta px-2.5 py-3 text-center text-papel">
                     <b className="block font-display text-[30px] font-normal">{n0(dev.pagar.d)}</b>
@@ -262,13 +266,11 @@ export default function ResultadoView({ id }: { id: string }) {
                   <div className="flex-1 rounded-lg bg-nevoa/45 px-2.5 py-3 text-center">
                     <b className="block font-display text-[30px] font-normal">{dev.recorrente.m}</b>
                     <span className="text-[12.5px] text-grafite/75">{D.paga.mesesPagar}</span>
-                    {dev.recorrente.aviso && <span className="mt-0.5 block text-xs text-bronze">{dev.recorrente.aviso}</span>}
                   </div>
                   {dev.recorrente.k !== null && (
                     <div className="flex-1 rounded-lg bg-tinta px-2.5 py-3 text-center text-papel">
                       <b className="block font-display text-[30px] font-normal">{n1(dev.recorrente.k)}</b>
                       <span className="text-[12.5px] text-papel/75">{D.paga.mesesFica}</span>
-                      {dev.recorrente.avisoK && <span className="mt-0.5 block text-xs text-[#cdb58f]">{dev.recorrente.avisoK}</span>}
                     </div>
                   )}
                 </>
@@ -279,15 +281,13 @@ export default function ResultadoView({ id }: { id: string }) {
             <div>
               {dev.linhas.map((l) => (
                 <div key={l.rotulo} className={`${lin} ${l.destaque ? "text-bronze" : ""}`}>
-                  <span>
-                    {l.rotulo}
-                    {l.aviso && <span className={estClaro}>{l.aviso}</span>}
-                  </span>
+                  <span>{l.rotulo}</span>
                   <b className="whitespace-nowrap font-display text-lg font-normal">{l.valor}</b>
                 </div>
               ))}
             </div>
           )}
+          {dev.avisoPaga && <p className="mt-2 text-[12.5px] leading-[1.45] text-bronze">{dev.avisoPaga}</p>}
           {dev.coerencia && <div className={alerta}>{dev.coerencia}</div>}
           {dev.notaCadaVenda && <p className={nota}>{dev.notaCadaVenda}</p>}
           <p className={nota}>{D.paga.notaComissao}</p>
