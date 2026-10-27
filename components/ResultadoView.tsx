@@ -60,9 +60,12 @@ export default function ResultadoView({ id }: { id: string }) {
   const comp: Respostas["compromisso"] = typeof compBruto === "string" ? { ...COMPROMISSO_VAZIO, numero: compBruto } : { ...COMPROMISSO_VAZIO, ...compBruto };
   const compromissoPreenchido = Object.values(comp).some((v) => v.trim() !== "");
 
+  // Funil que não afunila: o card do topo não aponta etapa e pede para conferir os números.
+  const incoerencia = res?.incoerencias[0] ?? null;
+
   // No máximo duas ações. A primeira é da etapa prioritária, quando há uma.
   const acoes = (() => {
-    const lista: string[] = gargalo ? [...D.etapas[gargalo].acoes] : [semDadoReal.length > 0 ? D.acoes.medir : D.acoes.escolher];
+    const lista: string[] = incoerencia ? [D.acoes.conferir] : gargalo ? [...D.etapas[gargalo].acoes] : [semDadoReal.length > 0 ? D.acoes.medir : D.acoes.escolher];
     // Ações do cálculo que já estão cobertas acima (a da etapa e a de medir etapas) ficam de fora.
     const prefixoMedir = config.acoes.medirEtapa.split("{etapas}")[0];
     for (const a of res?.acoes ?? []) {
@@ -72,9 +75,6 @@ export default function ResultadoView({ id }: { id: string }) {
     }
     return lista.slice(0, D.acoes.maximo);
   })();
-
-  // Funil que não afunila: o card do topo não aponta etapa e pede para conferir os números.
-  const incoerencia = res?.incoerencias[0] ?? null;
 
   const funil = local ? ["A", "B", "C", "D"].map((k, i) => ({ nome: D.detalhe.funilItens[i], campo: local.respostas.campos[k] })) : [];
   const maxFunil = Math.max(1, ...funil.map((f) => f.campo?.valor ?? 0));
@@ -165,7 +165,7 @@ export default function ResultadoView({ id }: { id: string }) {
                 {D.etapas[gargalo].seta}
               </>
             ) : (
-              D.achava.semEtapa
+              incoerencia ? D.achava.semEtapaConferir : D.achava.semEtapa
             )}
           </div>
         </div>

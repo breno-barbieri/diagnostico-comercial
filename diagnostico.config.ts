@@ -350,6 +350,7 @@ export const config = {
   // Textos do painel da turma que não vêm de outras seções.
   painel: {
     empate: "Empate",
+    empresaCada: "{qtd} empresa cada",
     empresasCada: "{qtd} empresas cada",
     notaPercepcao:
       "Contorno: onde a turma acha que perde mais. Cheio: etapa mais abaixo do que cada um esperava, só com números reais.",
@@ -424,6 +425,7 @@ export const config = {
       maximo: 2,
       // Sem etapa prioritária, a primeira ação é medir ou escolher o que acompanhar.
       medir: "Anote toda semana os números reais de contatos, atendimentos, orçamentos e vendas no controle semanal.",
+      conferir: "Confira os números do funil do último mês e refaça o diagnóstico com a base corrigida.",
       escolher: "Escolha a etapa que mais pesa no seu faturamento e anote o número dela toda semana no controle semanal.",
     },
     achava: {
@@ -432,6 +434,7 @@ export const config = {
       naoSabia: "Você não sabia onde perdia mais.",
       apontam: "Os números apontam",
       semEtapa: "Os números ainda não apontam uma etapa.",
+      semEtapaConferir: "Os números ainda não apontam uma etapa. Confira a base primeiro.",
     },
     compromisso: {
       titulo: "Seu compromisso: 4 semanas",

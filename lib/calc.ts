@@ -171,6 +171,8 @@ export function calcular(r: Respostas): Resultado {
     const vx = v(x), vy = v(y);
     if (vx !== null && vy !== null && vy > vx) incoerencias.push({ anterior: nx, posterior: ny });
   }
+  // Funil que não afunila: a base precisa ser conferida antes, então não há etapa prioritária.
+  if (incoerencias.length > 0) gargalo = null;
   const alertasBase = incoerencias.map((i) =>
     config.textos.alertaBase.replace("{posterior}", i.posterior).replace("{anterior}", i.anterior),
   );

@@ -85,7 +85,7 @@ export default function PainelView({ turma }: { turma: string }) {
     valor: etapaTopo ? (etapaTopo.empate ? config.painel.empate : etapaTopo.etapas[0].rotulo) : "-",
     apoio: etapaTopo
       ? etapaTopo.empate
-        ? `${listaE(etapaTopo.etapas.map((e) => e.rotulo))}. ${config.painel.empresasCada.replace("{qtd}", String(etapaTopo.qtd))}`
+        ? `${listaE(etapaTopo.etapas.map((e) => e.rotulo))}. ${(etapaTopo.qtd === 1 ? config.painel.empresaCada : config.painel.empresasCada).replace("{qtd}", String(etapaTopo.qtd))}`
         : `${etapaTopo.qtd} ${etapaTopo.qtd === 1 ? "empresa" : "empresas"} (a mais frequente)`
       : `${d.semGargaloCalculado} sem etapa apontada`,
   });
