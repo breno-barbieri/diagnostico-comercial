@@ -60,6 +60,7 @@ export type Resultado = {
   etapasComparadas: Etapa[];
   analiseParcial: boolean;
   alertasBase: string[];
+  incoerencias: { anterior: string; posterior: string }[];
   acoes: string[];
 };
 
@@ -164,14 +165,15 @@ export function calcular(r: Respostas): Resultado {
   const analiseParcial = etapasComparadas.length < etapasExistentes;
 
   // Números incompatíveis com um funil que afunila. Só alerta: movimentos do mês podem vir de grupos anteriores.
-  const alertasBase: string[] = [];
+  const incoerencias: { anterior: string; posterior: string }[] = [];
   const sequencia: [string, string, string, string][] = [["A", "B", "contatos", "atendimentos"], ["B", "C", "atendimentos", "orçamentos"], ["C", "D", "orçamentos", "vendas"]];
   for (const [x, y, nx, ny] of sequencia) {
     const vx = v(x), vy = v(y);
-    if (vx !== null && vy !== null && vy > vx) {
-      alertasBase.push(`Há mais ${ny} (${y}) do que ${nx} (${x}). Pode ser real, quando o mês recebe movimentos de períodos anteriores, ou pode ser erro de contagem. Confira a base.`);
-    }
+    if (vx !== null && vy !== null && vy > vx) incoerencias.push({ anterior: nx, posterior: ny });
   }
+  const alertasBase = incoerencias.map((i) =>
+    config.textos.alertaBase.replace("{posterior}", i.posterior).replace("{anterior}", i.anterior),
+  );
 
   const divergencia =
     gargalo && r.percepcao && r.percepcao !== "nao_sei" ? r.percepcao !== gargalo : null;
@@ -261,6 +263,7 @@ export function calcular(r: Respostas): Resultado {
     etapasComparadas,
     analiseParcial,
     alertasBase,
+    incoerencias,
     acoes,
     conversoes,
     gargalo,

@@ -14,7 +14,7 @@ function Secao({ n, titulo, nota, children, className = "" }: { n: string; titul
   return (
     <section className={`border-t border-papel/15 pt-6 ${className}`}>
       <div className="rotulo">{n}</div>
-      <h2 className="mt-2 text-3xl leading-tight">{titulo}</h2>
+      <h2 className="mt-2 text-2xl leading-tight lg:text-3xl">{titulo}</h2>
       {nota && <p className="mt-2 max-w-2xl text-lg text-papel/60">{nota}</p>}
       <div className="mt-6">{children}</div>
     </section>
@@ -31,9 +31,9 @@ function Trilho({ pct, cor = "bg-papel", alto = "h-3" }: { pct: number; cor?: st
 
 function Kpi({ rotulo, valor, apoio, grande = false }: { rotulo: string; valor: string; apoio?: string; grande?: boolean }) {
   return (
-    <div className="min-w-0 px-8 first:pl-0 last:pr-0">
+    <div className="min-w-0 py-4 first:pt-0 last:pb-0 lg:px-8 lg:py-0 lg:first:pl-0 lg:last:pr-0">
       <div className="rotulo">{rotulo}</div>
-      <div className={`mt-3 font-display leading-none ${grande ? "text-8xl" : "text-4xl"}`}>{valor}</div>
+      <div className={`mt-3 font-display leading-none ${grande ? "text-6xl lg:text-8xl" : "text-3xl lg:text-4xl"}`}>{valor}</div>
       {apoio && <div className="mt-3 text-lg text-papel/60">{apoio}</div>}
     </div>
   );
@@ -63,6 +63,8 @@ export default function PainelView({ turma }: { turma: string }) {
   const maxPerc = Math.max(1, ...d.percepcaoVsDado.flatMap((p) => [p.percepcao, p.dado]));
   const maxRit = Math.max(1, ...d.rituais.map((r) => r.qtd));
   const campos = d.camposIncertos.filter((c) => c.base > 0);
+  const etapaTopo = d.gargaloMaisFrequente;
+  const listaE = (xs: string[]) => (xs.length > 1 ? `${xs.slice(0, -1).join(", ")} e ${xs[xs.length - 1]}` : xs[0]);
   let contador = 0;
   const num = () => String(++contador).padStart(2, "0");
   const kpis: { rotulo: string; valor: string; apoio?: string; grande?: boolean }[] = [
@@ -80,21 +82,25 @@ export default function PainelView({ turma }: { turma: string }) {
   kpis.push({ rotulo: "Com números reais", valor: `${d.baseEtapas.comNumerosReais} de ${d.total}`, apoio: "empresas com números reais em alguma etapa do funil" });
   kpis.push({
     rotulo: "Etapa prioritária para investigar",
-    valor: d.gargaloMaisFrequente ? d.gargaloMaisFrequente.rotulo : "-",
-    apoio: d.gargaloMaisFrequente ? `${d.gargaloMaisFrequente.qtd} ${d.gargaloMaisFrequente.qtd === 1 ? "empresa" : "empresas"} (a mais frequente)` : `${d.semGargaloCalculado} sem etapa apontada`,
+    valor: etapaTopo ? (etapaTopo.empate ? config.painel.empate : etapaTopo.etapas[0].rotulo) : "-",
+    apoio: etapaTopo
+      ? etapaTopo.empate
+        ? `${listaE(etapaTopo.etapas.map((e) => e.rotulo))}. ${config.painel.empresasCada.replace("{qtd}", String(etapaTopo.qtd))}`
+        : `${etapaTopo.qtd} ${etapaTopo.qtd === 1 ? "empresa" : "empresas"} (a mais frequente)`
+      : `${d.semGargaloCalculado} sem etapa apontada`,
   });
 
   return (
-    <main className="min-h-screen bg-tinta px-14 py-10 text-papel">
-      <header className="flex items-end justify-between pb-8">
-        <div className="flex items-end gap-8">
-          <Onda className="w-44" cor="#F2F0EC" />
+    <main className="min-h-screen bg-tinta px-5 py-6 text-papel lg:px-14 lg:py-10">
+      <header className="flex flex-col gap-4 pb-6 lg:flex-row lg:items-end lg:justify-between lg:pb-8">
+        <div className="flex items-end gap-4 lg:gap-8">
+          <Onda className="w-20 lg:w-44" cor="#F2F0EC" />
           <div>
             <div className="rotulo">Diagnóstico comercial · {config.evento}</div>
-            <h1 className="mt-2 text-6xl leading-none">Turma {d.turma}</h1>
+            <h1 className="mt-2 text-4xl leading-none lg:text-6xl">Turma {d.turma}</h1>
           </div>
         </div>
-        <div className="text-right text-base text-papel/50">
+        <div className="text-sm text-papel/50 lg:text-right lg:text-base">
           Atualiza a cada 10 segundos{hora ? `. Última leitura às ${hora}` : ""}
         </div>
       </header>
@@ -103,13 +109,13 @@ export default function PainelView({ turma }: { turma: string }) {
         <div className="border-t border-papel/15 pt-16 text-4xl font-display text-papel/70">Aguardando as primeiras respostas.</div>
       ) : (
         <>
-          <div className="grid divide-x divide-papel/15 border-t border-papel/15 py-8" style={{ gridTemplateColumns: `repeat(${kpis.length}, minmax(0, 1fr))` }}>
+          <div className="grid grid-cols-1 divide-y divide-papel/15 border-t border-papel/15 py-6 lg:[grid-template-columns:repeat(var(--cols),minmax(0,1fr))] lg:divide-x lg:divide-y-0 lg:py-8" style={{ "--cols": kpis.length } as React.CSSProperties}>
             {kpis.map((k) => <Kpi key={k.rotulo} {...k} />)}
           </div>
 
-          <div className="grid grid-cols-12 gap-x-14 gap-y-12">
+          <div className="grid grid-cols-1 gap-y-10 lg:grid-cols-12 lg:gap-x-14 lg:gap-y-12">
             {config.exibicao.conversaoMediana && (
-            <Secao n={num()} titulo="Conversão da turma por etapa" nota="A barra é o que a turma informou (mediana). O traço bronze é o que a turma esperava." className="col-span-7">
+            <Secao n={num()} titulo="Conversão da turma por etapa" nota="A barra é o que a turma informou (mediana). O traço bronze é o que a turma esperava." className="lg:col-span-7">
               <div className="space-y-8">
                 {d.conversaoTurma.map((c) => (
                   <div key={c.etapa}>
@@ -136,7 +142,7 @@ export default function PainelView({ turma }: { turma: string }) {
             )}
 
             {config.exibicao.maturidade && (
-            <Secao n={num()} titulo="Nível de maturidade" className="col-span-5">
+            <Secao n={num()} titulo="Nível de maturidade" className="lg:col-span-5">
               <div className="flex h-72 items-end gap-5">
                 {d.niveis.map((n) => (
                   <div key={n.nome} className="flex h-full flex-1 flex-col justify-end">
@@ -149,10 +155,10 @@ export default function PainelView({ turma }: { turma: string }) {
             </Secao>
             )}
 
-            <Secao n={num()} titulo="Onde a turma acha que perde mais, e onde o resultado ficou mais abaixo da expectativa" nota="Contorno: onde a turma acha que perde mais. Cheio: etapa em que o resultado informado ficou mais abaixo da expectativa de cada um, só com números reais." className="col-span-7">
+            <Secao n={num()} titulo="Onde a turma acha que perde mais, e onde o resultado ficou mais abaixo da expectativa" nota={config.painel.notaPercepcao} className="lg:col-span-7">
               <div className="space-y-6">
                 {d.percepcaoVsDado.map((p) => (
-                  <div key={p.etapa} className="grid grid-cols-[14rem_1fr] items-center gap-6">
+                  <div key={p.etapa} className="grid grid-cols-1 items-center gap-2 lg:grid-cols-[14rem_1fr] lg:gap-6">
                     <div className="text-xl first-letter:uppercase">{p.rotulo}</div>
                     <div className="space-y-2">
                       <div className="flex items-center gap-4">
@@ -172,7 +178,7 @@ export default function PainelView({ turma }: { turma: string }) {
               </p>
             </Secao>
 
-            <Secao n={num()} titulo="Rituais praticados" className="col-span-5">
+            <Secao n={num()} titulo="Rituais praticados" className="lg:col-span-5">
               <div className="space-y-5">
                 {d.rituais.map((r) => (
                   <div key={r.valor}>
@@ -186,8 +192,8 @@ export default function PainelView({ turma }: { turma: string }) {
               </div>
             </Secao>
 
-            <Secao n={num()} titulo="Quanto da turma estimou ou não sabia" nota="Percentual de empresas que não tinham o número real." className="col-span-12">
-              <div className="grid grid-cols-3 gap-x-14 gap-y-5">
+            <Secao n={num()} titulo="Quanto da turma estimou ou não sabia" nota="Percentual de empresas que não tinham o número real." className="lg:col-span-12">
+              <div className="grid grid-cols-1 gap-y-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-14">
                 {campos.map((c) => (
                   <div key={c.id}>
                     <div className="mb-1.5 flex items-baseline justify-between text-xl">

@@ -49,6 +49,8 @@ export const config = {
       "Use os números do último mês. Algumas vendas vêm de orçamentos de meses anteriores, então as comparações são aproximadas.",
     notaGastoComercial:
       "Este número não é CAC. O CAC exige contar só clientes novos e apenas os custos de aquisição compatíveis. Aqui o gasto comercial total do mês é dividido pelas vendas do mês, inclusive de clientes antigos.",
+    alertaBase:
+      "Há mais {posterior} do que {anterior}. Pode ser real, quando o mês recebe movimentos de períodos anteriores, ou pode ser erro de contagem. Confira a base.",
     expectativaRegua:
       "Sua resposta é a régua de comparação. Não é referência de mercado.",
   },
@@ -152,14 +154,6 @@ export const config = {
 
   // false: as faixas abaixo não são usadas (estão provisórias). true: viram uma régua extra, mostrada no resultado.
   usarFaixas: false,
-
-  // Texto usado na frase "Você achava que perdia mais em [X]. O resultado informado ficou mais abaixo da sua expectativa em [Y]."
-  etapaRotulos: {
-    topo: "entrada de contatos",
-    lead_reuniao: "contato para atendimento",
-    reuniao_proposta: "atendimento para orçamento",
-    proposta_venda: "orçamento para venda",
-  } as Record<string, string>,
 
   // Blocos 2 e 3: campos numéricos. "somenteRecorrente" esconde o campo para venda avulsa.
   campos: [
@@ -353,6 +347,14 @@ export const config = {
   } as Record<Etapa, string>,
   maxGargalos: 3,
 
+  // Textos do painel da turma que não vêm de outras seções.
+  painel: {
+    empate: "Empate",
+    empresasCada: "{qtd} empresas cada",
+    notaPercepcao:
+      "Contorno: onde a turma acha que perde mais. Cheio: etapa mais abaixo do que cada um esperava, só com números reais.",
+  },
+
   // Textos da tela de resultado (devolutiva). Marcadores entre chaves, como {x}, são preenchidos pelo código.
   devolutiva: {
     etapas: {
@@ -408,7 +410,13 @@ export const config = {
         titulo: "Nenhuma etapa ficou abaixo do que você espera.",
         texto: "Escolha a etapa que mais pesa no seu faturamento para acompanhar toda semana.",
       },
-      parcial: "Só {n} de {total} etapas tinham números reais. O resultado pode mudar quando as outras forem medidas.",
+      parcial: "Só {n} de {total} etapas puderam ser comparadas. O resultado pode mudar quando as outras forem medidas.",
+      // Funil que não afunila: o card do topo não aponta etapa.
+      incoerente: {
+        titulo: "Confira seus números antes.",
+        texto:
+          "Há mais {posterior} do que {anterior}. Pode ser movimento de meses anteriores ou erro de contagem. Revise antes de tirar conclusões.",
+      },
     },
     acoes: {
       titulo: "O que fazer esta semana",

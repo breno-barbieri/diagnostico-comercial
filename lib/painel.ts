@@ -43,7 +43,7 @@ export function agregar(regs: Registro[]) {
   const garg = cont(regs.map((r) => r.gargaloCalculado));
   const percepcaoVsDado = etapas.map((e) => ({
     etapa: e,
-    rotulo: config.etapaRotulos[e],
+    rotulo: config.devolutiva.setaPercepcao[e] ?? e,
     percepcao: perc[e] ?? 0,
     dado: garg[e] ?? 0,
   }));
@@ -54,7 +54,7 @@ export function agregar(regs: Registro[]) {
     const esper = regs.map((r) => r.esperados?.[e]).filter((x): x is number => typeof x === "number");
     return {
       etapa: e,
-      rotulo: config.faixas[e].rotulo,
+      rotulo: config.devolutiva.etapas[e].seta,
       mediana: mediana(reais),
       medianaEsperada: mediana(esper),
       n: reais.length,
@@ -71,9 +71,14 @@ export function agregar(regs: Registro[]) {
     naoCalculavel: regs.length - calculaveis.length,
   };
 
-  const gargaloTop = Object.entries(garg)
-    .filter(([k]) => k !== "sem_dado")
-    .sort((a, b) => b[1] - a[1])[0];
+  // Etapa mais frequente. Em caso de empate, devolve todas as líderes na ordem do funil.
+  const ordem = ["lead_reuniao", "reuniao_proposta", "proposta_venda"];
+  const ranking = Object.entries(garg).filter(([k]) => k !== "sem_dado").sort((a, b) => b[1] - a[1]);
+  const topo = ranking[0]?.[1] ?? 0;
+  const lideres = ranking
+    .filter(([, q]) => q === topo)
+    .map(([k]) => ({ etapa: k, rotulo: config.devolutiva.setaPercepcao[k] ?? k }))
+    .sort((a, b) => ordem.indexOf(a.etapa) - ordem.indexOf(b.etapa));
 
   // Base das leituras de etapa: quantas respostas têm números reais comparáveis e quantas tiveram etapa apontada.
   const etapasCalc = ["lead_reuniao", "reuniao_proposta", "proposta_venda"] as const;
@@ -97,9 +102,7 @@ export function agregar(regs: Registro[]) {
     baseEtapas,
     semGargaloCalculado: garg["sem_dado"] ?? 0,
     economia,
-    gargaloMaisFrequente: gargaloTop
-      ? { etapa: gargaloTop[0], rotulo: config.etapaRotulos[gargaloTop[0]], qtd: gargaloTop[1] }
-      : null,
+    gargaloMaisFrequente: lideres.length > 0 ? { qtd: topo, etapas: lideres, empate: lideres.length > 1 } : null,
     rituais: rituais.sort((a, b) => b.qtd - a.qtd),
   };
 }

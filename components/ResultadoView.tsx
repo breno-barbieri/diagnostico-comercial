@@ -73,6 +73,9 @@ export default function ResultadoView({ id }: { id: string }) {
     return lista.slice(0, D.acoes.maximo);
   })();
 
+  // Funil que não afunila: o card do topo não aponta etapa e pede para conferir os números.
+  const incoerencia = res?.incoerencias[0] ?? null;
+
   const funil = local ? ["A", "B", "C", "D"].map((k, i) => ({ nome: D.detalhe.funilItens[i], campo: local.respostas.campos[k] })) : [];
   const maxFunil = Math.max(1, ...funil.map((f) => f.campo?.valor ?? 0));
   const estimou = local ? ["D", "E", "F", "G"].some((k) => local.respostas.campos[k]?.marca === "estimado") : false;
@@ -88,7 +91,12 @@ export default function ResultadoView({ id }: { id: string }) {
       {/* 1. Seu diagnóstico */}
       <section className={`${card} border-2 border-tinta`}>
         <div className="rotulo">{D.diagnostico.rotulo}</div>
-        {gargalo ? (
+        {incoerencia ? (
+          <>
+            <h1 className="mb-3.5 mt-2 text-[27px] leading-[1.15]">{D.diagnostico.incoerente.titulo}</h1>
+            <p className="text-[15px] leading-normal text-grafite">{fmt(D.diagnostico.incoerente.texto, { posterior: incoerencia.posterior, anterior: incoerencia.anterior })}</p>
+          </>
+        ) : gargalo ? (
           <>
             <h1 className="mb-3.5 mt-2 text-[27px] leading-[1.15]">{fmt(D.diagnostico.titulo, { etapa: D.etapas[gargalo].seta })}</h1>
             {deCadaDez(pct(gargalo)) !== null && esperado(gargalo) !== null && (
