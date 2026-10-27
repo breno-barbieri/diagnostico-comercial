@@ -1,0 +1,150 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><style>
+@font-face{font-family:Fr;src:url(fraunces.woff2)}@font-face{font-family:In;src:url(inter.woff2)}
+:root{--tinta:#0E0E10;--grafite:#2B2B2B;--papel:#F2F0EC;--bronze:#A07C4B;--nevoa:#D9D5CC}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--papel);color:var(--tinta);font-family:In,system-ui;-webkit-font-smoothing:antialiased}
+main{max-width:440px;margin:0 auto;padding:22px 16px 40px}
+.top{text-align:center;padding:62px 0 18px}
+.nome{font-family:Fr;font-size:27px;letter-spacing:-.01em;margin-top:6px}
+.sub{font-size:10.5px;letter-spacing:.32em;margin-top:6px}
+.ev{font-size:10.5px;letter-spacing:.32em;color:var(--bronze);margin-top:12px}
+.card{border:1px solid var(--nevoa);border-radius:10px;padding:18px;margin-top:14px}
+.forte{border:2px solid var(--tinta)}
+.rot{font-size:10.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--bronze)}
+h1{font-family:Fr;font-weight:400;font-size:27px;line-height:1.15;margin:8px 0 14px;letter-spacing:-.01em}
+h2{font-family:Fr;font-weight:400;font-size:21px;margin-bottom:10px}
+p{font-size:15px;line-height:1.5;color:var(--grafite)}
+.cmp{display:flex;gap:10px;margin:4px 0 14px}
+.cmp div{flex:1;border-radius:8px;background:rgba(217,213,204,.45);padding:12px 10px;text-align:center}
+.cmp b{display:block;font-family:Fr;font-weight:400;font-size:34px;line-height:1}
+.cmp span{font-size:12.5px;color:#555}
+.cmp .eu{background:var(--tinta);color:var(--papel)}.cmp .eu span{color:#cfcac0}
+.mot{border-left:2px solid var(--bronze);background:rgba(217,213,204,.4);padding:9px 11px;font-size:13.5px;margin-top:12px;color:var(--grafite);line-height:1.45}
+ol{padding-left:20px}ol li{font-size:15px;line-height:1.5;margin-bottom:8px}
+.btn{display:inline-block;background:var(--tinta);color:var(--papel);border-radius:7px;padding:12px 18px;font-weight:500;font-size:15px;margin-top:6px}
+.vs{display:grid;grid-template-columns:1fr;gap:8px}
+.vs div{border-radius:8px;padding:10px 12px;background:rgba(217,213,204,.4);font-size:14.5px}
+.vs small{display:block;font-size:11.5px;color:#666;margin-bottom:2px}
+dl div{display:grid;grid-template-columns:7.2rem 1fr;gap:10px;padding:8px 0;border-top:1px solid var(--nevoa);font-size:14px}
+dt{color:#666}
+.num{border-left:2px solid var(--bronze);background:rgba(217,213,204,.4);padding:10px 12px;margin-bottom:8px}
+.num b{font-family:Fr;font-weight:400;font-size:19px;display:block;margin-top:3px}
+.det{display:flex;justify-content:space-between;align-items:center;font-family:Fr;font-size:20px}
+.det i{font-style:normal;font-family:In;font-size:13px;color:var(--bronze)}
+.bar{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13.5px}
+.bar span{width:96px;color:#555}.bar div{height:22px;border-radius:4px;background:var(--grafite);color:var(--papel);font-size:12px;line-height:22px;padding-left:7px}
+.et{display:flex;justify-content:space-between;padding:9px 0;border-top:1px solid var(--nevoa);font-size:14.5px}
+.et.p{color:var(--bronze);font-weight:600}
+.et em{font-style:normal;color:#777;font-weight:400}
+.eco div{display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid var(--nevoa);font-size:14.5px}
+.eco b{font-family:Fr;font-weight:400;font-size:18px}
+.nota{font-size:12.5px;color:#777;margin-top:8px;line-height:1.45}
+</style><style>
+.ex{background:#A07C4B;color:#F2F0EC;text-align:center;font-size:11px;letter-spacing:.2em;padding:6px;border-radius:6px;margin-bottom:6px}
+.res p{margin-bottom:10px;color:var(--papel)}.res{background:var(--tinta);border-color:var(--tinta)}.res .rot{color:#cdb58f}
+.res h1{color:var(--papel)}.res b{color:#fff}
+.q{font-size:11px;letter-spacing:.24em;color:var(--bronze);text-transform:uppercase;margin-bottom:4px}
+.big{font-family:Fr;font-size:44px;line-height:1;margin:6px 0 4px}
+.lin{display:grid;grid-template-columns:1fr auto;gap:6px;padding:9px 0;border-top:1px solid var(--nevoa);font-size:14.5px;align-items:center}
+.lin b{font-family:Fr;font-weight:400;font-size:18px}
+.lin.p{color:var(--tinta);font-weight:600}.lin.p b{color:var(--bronze)}
+.tag{display:inline-block;font-size:11px;border:1px solid var(--bronze);color:var(--bronze);border-radius:20px;padding:1px 8px;margin-left:6px;font-weight:400}
+.vb{margin:10px 0}.vb .l{font-size:13.5px;margin-bottom:5px}.vb .l b{display:block;font-size:15px}
+.vb .t{height:12px;background:rgba(217,213,204,.7);border-radius:6px}.vb .t div{height:12px;border-radius:6px;background:var(--grafite)}
+.vb.p .t div{background:var(--bronze)}
+.ok{display:flex;gap:10px;margin:8px 0}.ok div{flex:1;border-radius:8px;padding:12px 10px;text-align:center;background:rgba(217,213,204,.45)}
+.ok b{display:block;font-family:Fr;font-weight:400;font-size:30px}.ok span{font-size:12.5px;color:#555}
+.esp li{list-style:none;padding:9px 0;border-top:1px solid var(--nevoa);font-size:14.5px}.esp small{display:block;color:#777;font-size:12px}
+.esp{padding:0}
+.alerta{border-left:2px solid var(--bronze);background:rgba(160,124,75,.12);padding:9px 11px;font-size:13.5px;margin-top:10px;line-height:1.45}
+.est{font-size:12px;color:#cdb58f;font-weight:400}.est2{font-size:12px;color:var(--bronze);display:block;margin-top:2px}.btn2{display:inline-block;border:1.5px solid var(--tinta);border-radius:7px;padding:11px 16px;font-size:15px;margin:6px 6px 0 0}
+.eco b{white-space:nowrap;margin-left:10px}</style></head><body><main>
+<div class="top" style="padding-top:20px"><svg width="96" height="22" viewBox="0 0 96 22"><path d="M2 4 C10 -2 14 20 24 15 C33 10 40 9 52 11 C66 13 78 11 90 11" fill="none" stroke="#0E0E10" stroke-width="2.2" stroke-linecap="round"/><circle cx="91" cy="11" r="2.6" fill="#A07C4B"/></svg>
+<div class="nome">Breno Barbieri</div><div class="sub">INTELIGÊNCIA COMERCIAL</div><div class="ev">G4 TRACTION</div></div>
+<div class="ex">MOCKUP COM DADOS DE EXEMPLO</div>
+
+<section class="card res">
+<div class="rot">1. Resumo</div>
+<h1>Olhe primeiro para: orçamento → venda</h1>
+<p>De cada 10 orçamentos, <b>2 viraram venda</b>. Você esperava 4.</p>
+<p>Para pagar o seu comercial, você precisa de <b>8 vendas por mês</b>. Fez 6. <span class="est">(margem estimada: confirme)</span></p>
+<p style="margin-bottom:0">Esta semana: pergunte a quem não fechou por que não fechou.</p>
+</section>
+
+<section class="card">
+<div class="q">2. Onde você perde vendas?</div>
+<div class="big">3 de cada 100</div>
+<p>contatos viraram venda no último mês. Para fazer 1 venda, você precisou de 33 contatos. Você esperava que cerca de 10 de cada 100 virassem venda.</p>
+<div style="margin-top:12px">
+<div class="lin"><span>Contato → atendimento</span><span><b>3</b> de 10 <em style="color:#777;font-style:normal">· esperava 4</em></span></div>
+<div class="lin"><span>Atendimento → orçamento</span><span><b>5</b> de 10 <em style="color:#777;font-style:normal">· esperava 6</em></span></div>
+<div class="lin p"><span>Orçamento → venda <span class="tag">prioridade</span></span><span><b>2</b> de 10 <em style="color:#777;font-style:normal;font-weight:400">· esperava 4</em></span></div>
+</div>
+<p class="nota">A prioridade é a etapa que ficou mais abaixo do que você mesmo esperava. Não é comparação com o mercado.</p>
+<div class="alerta">Atenção aos números pequenos: com 30 orçamentos, 1 venda a mais ou a menos muda essa taxa para 2,3 ou 1,7 de cada 10. Confirme com 4 semanas de números antes de decidir.</div>
+
+</section>
+
+
+<section class="card">
+<div class="q">3. Você achava x os números</div>
+<div class="vs"><div><small>Você achava que perdia mais em</small>contato → atendimento</div><div style="background:#0E0E10;color:#F2F0EC"><small style="color:#cfcac0">Os números apontam</small>orçamento → venda</div></div>
+<p class="nota">Quando a percepção e os números divergem, vale olhar os dois com o time antes de decidir.</p>
+</section>
+
+<section class="card">
+<div class="q">4. Sua venda se paga?</div>
+<div class="ok"><div><b>8</b><span>vendas por mês pagam o seu comercial</span><span class="est2">margem estimada</span></div><div style="background:#0E0E10;color:#F2F0EC"><b>6</b><span style="color:#cfcac0">vendas você fez</span></div></div>
+<div class="eco">
+<div><span>Cada venda deixa, depois dos custos<span class="est2">margem estimada: confirme</span></span><b>R$ 1.500</b></div>
+<div><span>No mês, as vendas deixaram</span><b>R$ 9.000</b></div>
+<div><span>Vender custou no mês</span><b>R$ 12.000</b></div>
+<div><span>Faltaram para cobrir</span><b>R$ 3.000</b></div>
+</div>
+<p class="nota">"Cada venda deixa" é o ticket (R$ 5.000) vezes a margem que sobra depois de custo, impostos e comissão (30%). Parte do gasto comercial é fixa, então vender mais não aumenta o prejuízo na mesma proporção.</p>
+</section>
+
+
+<section class="card">
+<div class="q">5. Como sua operação funciona hoje</div>
+<p class="nota" style="margin-top:0">O que você respondeu, sem interpretação:</p>
+<ul class="esp">
+<li><small>Quem vende</small>O dono e mais uma ou duas pessoas</li>
+<li><small>Se quem mais vende sair por uma semana</small>Alguém assume com dificuldade</li>
+<li><small>Rituais que roda hoje</small>Reunião mensal de resultados</li>
+<li><small>Seu cliente ideal, nas suas palavras</small>"Empresas de serviço com 10 a 50 funcionários que já têm time comercial"</li>
+</ul>
+</section>
+
+<section class="card">
+<div class="q">6. O que você ainda não mede</div>
+<p>De 8 números, <b>6 eram reais</b> e 2 foram estimados:</p>
+<ul class="esp"><li>Margem de contribuição</li><li>Dias do primeiro contato ao fechamento</li></ul>
+<p class="nota">Com esses dois números reais, a conta da seção 4 e o ciclo do compromisso ficam confiáveis.</p>
+</section>
+
+<section class="card">
+<div class="q">7. O que fazer esta semana</div>
+<p style="margin-top:6px">O número mostra onde olhar. O motivo você descobre conversando com o time e com quem não comprou.</p>
+<div class="mot" style="margin-bottom:12px">Motivos comuns para conferir: o cliente não tinha perfil, a proposta não mostrou valor ou o preço.</div>
+<ol style="margin-top:8px"><li>Pergunte a quem não fechou por que não fechou e anote o motivo.</li>
+<li>Antes do próximo orçamento, confirme que o cliente tem a necessidade, o dinheiro e quem decide.</li>
+<li>Nas próximas vendas, anote a data do primeiro contato e a data do fechamento.</li></ol>
+<a class="btn">Baixar o controle semanal</a>
+</section>
+
+<section class="card">
+<div class="q">8. Seu compromisso: 4 semanas</div>
+<div class="num" style="margin-top:8px"><div class="rot">Número da semana</div><b>Orçamentos que viraram venda</b></div>
+<dl><div><dt>Fonte</dt><dd>Planilha de orçamentos</dd></div><div><dt>Responsável</dt><dd>Quem envia os orçamentos</dd></div>
+<div><dt>Primeira revisão</dt><dd>Segunda, 23/11</dd></div><div><dt>Decisão</dt><dd>Se vale qualificar melhor antes de orçar</dd></div>
+<div><dt>Como saber que fiz</dt><dd>4 semanas anotadas na planilha</dd></div></dl>
+<div class="alerta">Seu ciclo de venda é de 45 dias <span style="color:var(--bronze)">(estimado)</span>, maior que as 4 semanas do compromisso. Nessas 4 semanas, acompanhe quantos orçamentos viram venda. O efeito no faturamento aparece depois.</div>
+</section>
+
+<section class="card forte">
+<div class="q">9. Quando refazer</div>
+<p>Refaça o diagnóstico na sua primeira revisão, <b>segunda, 23/11</b>, com os números anotados no controle semanal. Baixe este resultado para comparar com o próximo.</p>
+<a class="btn">Baixar PDF</a>
+</section>
+</main></body></html>

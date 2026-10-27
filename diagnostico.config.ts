@@ -395,14 +395,31 @@ export const config = {
       reuniao_proposta: "atendimento → orçamento",
       proposta_venda: "orçamento → venda",
     } as Record<string, string>,
-    diagnostico: {
-      rotulo: "Seu diagnóstico",
+
+    // Nome de cada número no aviso "(margem estimada: confirme)".
+    estimado: {
+      A: "contatos estimados", B: "atendimentos estimados", C: "orçamentos estimados", D: "vendas estimadas",
+      E: "ticket estimado", F: "margem estimada", G: "gasto estimado", H: "ciclo estimado",
+      I: "clientes ativos estimados", J: "cancelamentos estimados", K: "tempo de permanência estimado", L: "recompras estimadas",
+    } as Record<string, string>,
+    avisoEstimado: "({lista}: confirme)",
+    // Nome de cada número na lista "O que você ainda não mede".
+    campoRotulo: {
+      A: "Contatos", B: "Atendimentos", C: "Orçamentos", D: "Vendas",
+      E: "Ticket médio", F: "Margem de contribuição", G: "Gasto comercial do mês", H: "Dias do primeiro contato ao fechamento",
+      I: "Clientes ativos", J: "Clientes que cancelaram no último mês", K: "Meses que um cliente fica", L: "Compras por cliente",
+    } as Record<string, string>,
+
+    // 1. Resumo
+    resumo: {
+      rotulo: "1. Resumo",
       titulo: "Olhe primeiro para: {etapa}",
-      // O número grande aparece separado, acima de cada frase.
-      cadaDez: "de cada 10 {itens} viraram {proxima}",
-      esperava: "era o que você esperava",
-      texto: "O número mostra onde olhar. O motivo você descobre conversando com o time e com quem não comprou.",
-      motivosPrefixo: "Motivos comuns para conferir: ",
+      linhaEtapa: "De cada 10 {itens}, **{x} viraram {proxima}**. Você esperava {y}.",
+      linhaPagar: "Para pagar o seu comercial, você precisa de **{n} vendas por mês**. Fez {d}.",
+      linhaPagarUma: "Para pagar o seu comercial, você precisa de **1 venda por mês**. Fez {d}.",
+      linhaRecorrente: "Cada cliente novo leva **{m} meses** para pagar o custo de vender para ele.",
+      linhaRecorrenteFica: " Em média, ele fica {k} meses.",
+      linhaSemana: "Esta semana: {acao}",
       semEtapaEstimado: {
         titulo: "Ainda não dá para dizer onde olhar primeiro.",
         texto: "Alguns números foram estimados. Primeiro passo: anotar os números reais por 4 semanas.",
@@ -412,65 +429,134 @@ export const config = {
         texto: "Escolha a etapa que mais pesa no seu faturamento para acompanhar toda semana.",
       },
       parcial: "Só {n} de {total} etapas puderam ser comparadas. O resultado pode mudar quando as outras forem medidas.",
-      // Funil que não afunila: o card do topo não aponta etapa.
+      // Funil que não afunila: o resumo não aponta etapa.
       incoerente: {
         titulo: "Confira seus números antes.",
         texto:
           "Há mais {posterior} do que {anterior}. Pode ser movimento de meses anteriores ou erro de contagem. Revise antes de tirar conclusões.",
       },
     },
-    acoes: {
-      titulo: "O que fazer esta semana",
-      botao: "Baixar o controle semanal",
-      maximo: 2,
-      // Sem etapa prioritária, a primeira ação é medir ou escolher o que acompanhar.
-      medir: "Anote toda semana os números reais de contatos, atendimentos, orçamentos e vendas no controle semanal.",
-      conferir: "Confira os números do funil do último mês e refaça o diagnóstico com a base corrigida.",
-      escolher: "Escolha a etapa que mais pesa no seu faturamento e anote o número dela toda semana no controle semanal.",
+
+    // 2. Onde você perde vendas?
+    perde: {
+      rotulo: "2. Onde você perde vendas?",
+      grande: "{t} de cada 100",
+      grandeMenos: "Menos de 1 de cada 100",
+      texto: "contatos viraram venda no último mês.",
+      precisou: " Para fazer 1 venda, você precisou de {c} contatos.",
+      esperava: " Você esperava que cerca de {e} de cada 100 virassem venda.",
+      esperavaMenos: " Você esperava que menos de 1 de cada 100 virasse venda.",
+      cadaDez: "{x} de 10",
+      esperavaEtapa: "· esperava {y}",
+      naoSeAplica: "não se aplica ao seu negócio",
+      prioridade: "prioridade",
+      notaPrioridade: "A prioridade é a etapa que ficou mais abaixo do que você mesmo esperava. Não é comparação com o mercado.",
+      notaMes: "Os números são do mês. Algumas vendas vêm de orçamentos de meses anteriores, então trate as comparações como aproximação.",
+      pequenos: {
+        ambos:
+          "Atenção aos números pequenos: com {n} {itens}, 1 {proxima} a mais ou a menos muda essa taxa para {mais} ou {menos} de cada 10. Confirme com 4 semanas de números antes de decidir.",
+        soMais:
+          "Atenção aos números pequenos: com {n} {itens}, 1 {proxima} a mais muda essa taxa para {mais} de cada 10. Confirme com 4 semanas de números antes de decidir.",
+        soMenos:
+          "Atenção aos números pequenos: com {n} {itens}, 1 {proxima} a menos muda essa taxa para {menos} de cada 10. Confirme com 4 semanas de números antes de decidir.",
+      },
     },
+
+    // 3. Você achava x os números
     achava: {
-      titulo: "Você achava x os números",
+      rotulo: "3. Você achava x os números",
       achava: "Você achava que perdia mais em",
       naoSabia: "Você não sabia onde perdia mais.",
       apontam: "Os números apontam",
       semEtapa: "Os números ainda não apontam uma etapa.",
       semEtapaConferir: "Os números ainda não apontam uma etapa. Confira a base primeiro.",
+      diverge: "Quando a percepção e os números divergem, vale olhar os dois com o time antes de decidir.",
     },
-    compromisso: {
-      titulo: "Seu compromisso: 4 semanas",
-      numero: "Número da semana",
-      naoDefinido: "Ainda não definido",
-      naoPreenchido: "Não preenchido",
-      semPreencher: "Você não preencheu o compromisso. Escreva no papel: número, fonte, responsável, primeira revisão, decisão e como saber que fez.",
-      rotulos: { fonte: "Fonte", responsavel: "Responsável", revisao: "Primeira revisão", decisao: "Decisão", conclusao: "Como saber que fiz" },
-    },
-    detalhe: {
-      titulo: "Seus números em detalhe",
-      ver: "ver ▾",
-      fechar: "fechar ▴",
-      funil: "Funil do último mês",
-      funilItens: ["Contatos", "Atendimentos", "Orçamentos", "Vendas"],
-      semDado: "sem dado",
-      cadaDez: "{x} de cada 10",
-      esperava: "esperava {y}",
-      indisponivel: "cálculo indisponível",
-      naoSeAplica: "não se aplica ao seu negócio",
-      notaMes: "Os números são do mês. Algumas vendas vêm de orçamentos de meses anteriores, então trate as comparações como aproximação.",
-      economia: "Economia da venda",
+
+    // 4. Sua venda se paga?
+    paga: {
+      rotulo: "4. Sua venda se paga?",
+      vendasPagam: "vendas por mês pagam o seu comercial",
+      umaVendaPaga: "venda por mês paga o seu comercial",
+      vendasFez: "vendas você fez",
+      umaVendaFez: "venda você fez",
+      mesesPagar: "meses para pagar o custo de cada cliente",
+      mesesFica: "meses que o cliente fica, em média",
       porVenda: "Cada venda deixa, depois dos custos",
       noMes: "No mês, as vendas deixaram",
       custo: "Vender custou no mês",
       faltaram: "Faltaram para cobrir",
       sobraram: "Sobraram depois de cobrir",
-      notaComissao: "Confira se a comissão não foi contada duas vezes: na margem e no gasto.",
-      notaGastoPorVenda: "Gasto para vender, por venda: {valor}. Não é CAC, porque inclui vendas para clientes antigos.",
-      notaGastoPorVendaIndisponivel: "Gasto para vender, por venda: indisponível sem vendas no mês. Não é CAC, porque inclui vendas para clientes antigos.",
-      naoCalculavel: "Não foi possível calcular.",
       vida: "Quanto um cliente deixa no tempo em que fica com você",
       churn: "Clientes que cancelam por mês",
-      estimado: "Parte desses números foi estimada. Confirme com números reais antes de decidir.",
+      coerencia:
+        "Com {churn}% de cancelamento ao mês, o cliente ficaria em média {implicito} meses. Você informou {k}. Vale conferir os dois números.",
+      notaCadaVenda:
+        "\"Cada venda deixa\" é o ticket ({E}) vezes a margem que sobra depois de custo, impostos e comissão ({F}%). Parte do gasto comercial é fixa, então vender mais não aumenta o prejuízo na mesma proporção.",
+      notaComissao: "Confira se a comissão não foi contada duas vezes: na margem e no gasto.",
+      notaGastoPorVenda: "Gasto para vender, por venda: {valor}. Não é CAC, porque inclui vendas para clientes antigos.",
     },
-    pdf: "Baixar PDF",
+
+    // 5. Como sua operação funciona hoje
+    operacao: {
+      rotulo: "5. Como sua operação funciona hoje",
+      intro: "O que você respondeu, sem interpretação:",
+      quemVende: "Quem vende",
+      dependencia: "Se quem mais vende sair por uma semana",
+      rituais: "Rituais que roda hoje",
+      rituaisNenhum: "Nenhum",
+      clienteIdeal: "Seu cliente ideal, nas suas palavras",
+      semClienteIdeal: "Você ainda não descreveu o seu cliente ideal em uma frase.",
+    },
+
+    // 6. O que você ainda não mede
+    mede: {
+      rotulo: "6. O que você ainda não mede",
+      todos: "Todos os {total} números eram reais.",
+      intro: "De {total} números, {itens}:",
+      real: "{n} era real",
+      reais: "{n} eram reais",
+      estimado: "{n} foi estimado",
+      estimados: "{n} foram estimados",
+      desconhecido: "{n} você não tinha como saber",
+    },
+
+    // 7. O que fazer esta semana
+    semana: {
+      rotulo: "7. O que fazer esta semana",
+      texto: "O número mostra onde olhar. O motivo você descobre conversando com o time e com quem não comprou.",
+      motivosPrefixo: "Motivos comuns para conferir: ",
+      maximo: 3,
+      botao: "Baixar o controle semanal",
+      // Sem etapa prioritária, a primeira ação é medir ou escolher o que acompanhar.
+      medir: "Anote toda semana os números reais de contatos, atendimentos, orçamentos e vendas no controle semanal.",
+      escolher: "Escolha a etapa que mais pesa no seu faturamento e anote o número dela toda semana no controle semanal.",
+      conferir: "Confira os números do funil do último mês e refaça o diagnóstico com a base corrigida.",
+    },
+
+    // 8. Seu compromisso
+    compromisso: {
+      rotulo: "8. Seu compromisso: 4 semanas",
+      numero: "Número da semana",
+      naoDefinido: "Ainda não definido",
+      naoPreenchido: "Não preenchido",
+      semPreencher: "Você não preencheu o compromisso. Escreva no papel: número, fonte, responsável, primeira revisão, decisão e como saber que fez.",
+      rotulos: { fonte: "Fonte", responsavel: "Responsável", revisao: "Primeira revisão", decisao: "Decisão", conclusao: "Como saber que fiz" },
+      cicloLongo:
+        "Seu ciclo de venda é de {H} dias{aviso}, maior que as 4 semanas do compromisso. Nessas 4 semanas, acompanhe a conversão da etapa. O efeito no faturamento aparece depois.",
+      cicloCurto: "Seu ciclo de venda é de {H} dias{aviso}. Em 4 semanas já dá para ver o efeito nas vendas.",
+    },
+
+    // 9. Quando refazer
+    refazer: {
+      rotulo: "9. Quando refazer",
+      comData:
+        "Refaça o diagnóstico na sua primeira revisão, **{data}**, com os números anotados no controle semanal. Baixe este resultado para comparar com o próximo.",
+      semData:
+        "Refaça o diagnóstico depois de 4 semanas de números anotados no controle semanal. Baixe este resultado para comparar com o próximo.",
+      pdf: "Baixar PDF",
+    },
+
     semValores: "Os valores em reais e volumes ficam só no navegador onde você respondeu. Aqui aparecem apenas as razões entre as etapas.",
   },
 
