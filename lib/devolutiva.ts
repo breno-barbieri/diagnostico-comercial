@@ -196,7 +196,11 @@ export function montarDevolutiva(r: Respostas, res: Resultado) {
   let ciclo: string | null = null;
   if (H !== null && H >= 0) {
     const av = aviso(["H"]);
-    ciclo = fmt(H > 28 ? D.compromisso.cicloLongo : D.compromisso.cicloCurto, { H: n0(H), aviso: av ? ` ${av}` : "" });
+    const duracao = H >= 60 ? fmt(D.compromisso.cicloMeses, { m: n0(H / 30), H: n0(H) }) : fmt(D.compromisso.cicloDias, { H: n0(H) });
+    const acompanhar = res.gargalo ? D.compromisso.acompanharEtapa[res.gargalo] : D.compromisso.acompanharSemEtapa;
+    ciclo = H > 28
+      ? fmt(D.compromisso.cicloLongo, { duracao, aviso: av ? ` ${av}` : "", acompanhar })
+      : fmt(D.compromisso.cicloCurto, { H: n0(H), aviso: av ? ` ${av}` : "" });
   }
 
   return {

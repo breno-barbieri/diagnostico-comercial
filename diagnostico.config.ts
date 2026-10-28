@@ -617,8 +617,17 @@ export const config = {
       salvo: "Compromisso salvo.",
       editar: "Editar compromisso",
       erroSalvar: "Não foi possível salvar. Tente de novo.",
+      // Ciclo maior que 4 semanas: o faturamento ainda não muda no prazo do compromisso.
       cicloLongo:
-        "Seu ciclo de venda é de {H} dias{aviso}, maior que as 4 semanas do compromisso. Nessas 4 semanas, acompanhe a conversão da etapa. O efeito no faturamento aparece depois.",
+        "Seu ciclo de venda é de {duracao}{aviso}. As vendas que você influenciar nessas 4 semanas só vão fechar depois disso, então o faturamento ainda não vai mudar. O que já dá para acompanhar agora é {acompanhar}.",
+      cicloMeses: "cerca de {m} meses ({H} dias)",
+      cicloDias: "{H} dias",
+      acompanharEtapa: {
+        lead_reuniao: "quantos contatos viram atendimento",
+        reuniao_proposta: "quantos atendimentos viram orçamento",
+        proposta_venda: "quantos orçamentos viram venda",
+      } as Record<string, string>,
+      acompanharSemEtapa: "quantos contatos, atendimentos e orçamentos você tem por semana",
       cicloCurto: "Seu ciclo de venda é de {H} dias{aviso}. Em 4 semanas já dá para ver o efeito nas vendas.",
     },
 
