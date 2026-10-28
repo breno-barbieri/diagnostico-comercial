@@ -619,16 +619,16 @@ export const config = {
       erroSalvar: "Não foi possível salvar. Tente de novo.",
       // Ciclo maior que 4 semanas: o faturamento ainda não muda no prazo do compromisso.
       cicloLongo:
-        "Seu ciclo de venda é de {duracao}{aviso}. As vendas que você influenciar nessas 4 semanas só vão fechar depois disso, então o faturamento ainda não vai mudar. O que já dá para acompanhar agora é {acompanhar}.",
-      cicloMeses: "cerca de {m} meses ({H} dias)",
+        "Do primeiro contato até fechar, sua venda leva {duracao}{aviso}. Por isso, em 4 semanas o seu faturamento ainda não vai mudar. Nessas 4 semanas, olhe para isto: {acompanhar}.",
+      cicloMeses: "cerca de {m} meses",
       cicloDias: "{H} dias",
       acompanharEtapa: {
-        lead_reuniao: "quantos contatos viram atendimento",
-        reuniao_proposta: "quantos atendimentos viram orçamento",
-        proposta_venda: "quantos orçamentos viram venda",
+        lead_reuniao: "quantas pessoas que chegam até você são atendidas",
+        reuniao_proposta: "quantas pessoas atendidas recebem um orçamento",
+        proposta_venda: "quantos orçamentos você fecha",
       } as Record<string, string>,
-      acompanharSemEtapa: "quantos contatos, atendimentos e orçamentos você tem por semana",
-      cicloCurto: "Seu ciclo de venda é de {H} dias{aviso}. Em 4 semanas já dá para ver o efeito nas vendas.",
+      acompanharSemEtapa: "quantas pessoas chegam, quantas você atende e quantos orçamentos envia por semana",
+      cicloCurto: "Do primeiro contato até fechar, sua venda leva {H} dias{aviso}. Em 4 semanas você já vai ver se as vendas mudaram.",
     },
 
     // 9. Quando refazer
