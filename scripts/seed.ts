@@ -51,6 +51,7 @@ for (let i = 0; i < 30; i++) {
       clienteIdeal: Math.random() < 0.5 ? "sim" : "nao",
       clienteIdealTexto: "",
       dependencia: pick(config.ponte.dependencia.opcoes).valor,
+      registro: pick(config.ponte.registro.opcoes).valor,
     },
     gargalosConfirmados: [],
     compromisso: { ...COMPROMISSO_VAZIO },

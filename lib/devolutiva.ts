@@ -166,6 +166,8 @@ export function montarDevolutiva(r: Respostas, res: Resultado) {
   if (quem) operacao.push({ rotulo: D.operacao.quemVende, valor: quem });
   const dep = rotuloDe(config.ponte.dependencia.opcoes, r.ponte.dependencia);
   if (dep) operacao.push({ rotulo: D.operacao.dependencia, valor: dep });
+  const reg = rotuloDe(config.ponte.registro.opcoes, r.ponte.registro);
+  if (reg) operacao.push({ rotulo: D.operacao.registro, valor: reg });
   const rituais = r.ponte.rituais.filter((v) => v !== "nenhum").map((v) => rotuloDe(config.ponte.rituais.opcoes, v)).filter((x): x is string => !!x);
   if (r.ponte.rituais.length > 0) operacao.push({ rotulo: D.operacao.rituais, valor: rituais.length > 0 ? rituais.join(", ") : D.operacao.rituaisNenhum });
   const frase = r.ponte.clienteIdealTexto.trim();

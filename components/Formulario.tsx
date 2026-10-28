@@ -26,7 +26,7 @@ export default function Formulario({ turma }: { turma: string }) {
     percepcao: "",
     expectativas: {},
     campos: {},
-    ponte: { rituais: [], clienteIdeal: "", clienteIdealTexto: "", dependencia: "" },
+    ponte: { rituais: [], clienteIdeal: "", clienteIdealTexto: "", dependencia: "", registro: "" },
     gargalosConfirmados: [],
     compromisso: { ...COMPROMISSO_VAZIO },
     frente: "",
@@ -72,6 +72,7 @@ export default function Formulario({ turma }: { turma: string }) {
       if (r.ponte.rituais.length === 0) return "Escolha ao menos um ritual (ou Nenhum).";
       if (!r.ponte.clienteIdeal) return "Responda sobre o cliente ideal.";
       if (!r.ponte.dependencia) return "Responda o que acontece se quem mais vende sair.";
+      if (!r.ponte.registro) return "Responda onde ficam anotadas as suas vendas.";
     }
     return "";
   }
@@ -269,6 +270,15 @@ export default function Formulario({ turma }: { turma: string }) {
               {config.ponte.dependencia.opcoes.map((o) => (
                 <label key={o.valor} className="flex items-center gap-3 rounded-lg border border-nevoa p-3">
                   <input type="radio" name="dep" className="h-5 w-5" checked={r.ponte.dependencia === o.valor} onChange={() => setR({ ...r, ponte: { ...r.ponte, dependencia: o.valor } })} />
+                  {o.rotulo}
+                </label>
+              ))}
+            </fieldset>
+            <fieldset className="grid gap-2">
+              <legend className="mb-1 font-medium">{config.ponte.registro.pergunta}</legend>
+              {config.ponte.registro.opcoes.map((o) => (
+                <label key={o.valor} className="flex items-center gap-3 rounded-lg border border-nevoa p-3">
+                  <input type="radio" name="registro" className="h-5 w-5" checked={r.ponte.registro === o.valor} onChange={() => setR({ ...r, ponte: { ...r.ponte, registro: o.valor } })} />
                   {o.rotulo}
                 </label>
               ))}

@@ -115,6 +115,10 @@ export function agregar(regs: Registro[]) {
 
   // Quantas empresas param de vender se quem mais vende sair por uma semana.
   const depResp = regs.filter((r) => r.ponte?.dependencia);
+  // Onde as vendas ficam anotadas: quantas não usam sistema nem planilha.
+  const organizados = config.ponte.registro.opcoes.filter((o) => o.organizado).map((o) => o.valor);
+  const regResp = regs.filter((r) => r.ponte?.registro);
+  const registro = { base: regResp.length, desorganizado: regResp.filter((r) => !organizados.includes(r.ponte.registro!)).length };
   const dependencia = { base: depResp.length, param: depResp.filter((r) => r.ponte.dependencia === "tudo_para").length };
 
   // Esperado x conseguido, só com números reais: mediana de cada etapa e a etapa com a maior distância.
@@ -131,6 +135,7 @@ export function agregar(regs: Registro[]) {
   return {
     total,
     medicao,
+    registro,
     dependencia,
     esperadoConseguido,
     acha,

@@ -28,6 +28,7 @@ export type Respostas = {
     clienteIdeal: "sim" | "nao" | "";
     clienteIdealTexto: string;
     dependencia: string;
+    registro?: string;
   };
   gargalosConfirmados: string[];
   compromisso: Compromisso;

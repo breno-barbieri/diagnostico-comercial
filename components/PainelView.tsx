@@ -11,6 +11,8 @@ const fmt = (t: string, v: Record<string, string | number>) => t.replace(/\{(\w+
 const listaE = (xs: string[]) => (xs.length > 1 ? `${xs.slice(0, -1).join(", ")} e ${xs[xs.length - 1]}` : xs[0] ?? "");
 // Proporção de 0 a 1 em "x de cada 10", com uma casa quando não for inteira.
 const dezDe = (p: number) => (Math.round(p * 100) / 10).toLocaleString("pt-BR", { maximumFractionDigits: 1 });
+// Para contar empresas: "6 de cada 10", sem decimal.
+const inteiroDe = (p: number) => String(Math.round(p * 10));
 const minuscula = (t: string) => t.charAt(0).toLowerCase() + t.slice(1);
 
 // Texto com **trechos em negrito**.
@@ -149,12 +151,19 @@ export default function PainelView({ turma }: { turma: string }) {
             </section>
           </div>
 
-          {(d.dependencia.base > 0 || d.esperadoConseguido) && (
-            <div className="mt-10 grid gap-12 border-t border-papel/15 pt-8 lg:grid-cols-2 lg:gap-14">
+          {(d.registro.base > 0 || d.dependencia.base > 0 || d.esperadoConseguido) && (
+            <div className="mt-10 grid gap-12 border-t border-papel/15 pt-8 lg:grid-cols-3 lg:gap-14">
+              {d.registro.base > 0 && (
+                <section>
+                  <div className="rotulo">{P.extra.registroRotulo}</div>
+                  <p className={concl}><Rico texto={fmt(P.extra.registro, { x: inteiroDe(d.registro.desorganizado / d.registro.base) })} /></p>
+                  <p className="text-base text-papel/55 lg:text-lg">{fmt(P.extra.registroBase, { qtd: d.registro.desorganizado, base: d.registro.base })}</p>
+                </section>
+              )}
               {d.dependencia.base > 0 && (
                 <section>
                   <div className="rotulo">{P.extra.dependenciaRotulo}</div>
-                  <p className={concl}><Rico texto={fmt(P.extra.dependencia, { x: dezDe(d.dependencia.param / d.dependencia.base) })} /></p>
+                  <p className={concl}><Rico texto={fmt(P.extra.dependencia, { x: inteiroDe(d.dependencia.param / d.dependencia.base) })} /></p>
                   <p className="text-base text-papel/55 lg:text-lg">{fmt(P.extra.dependenciaBase, { param: d.dependencia.param, base: d.dependencia.base })}</p>
                 </section>
               )}

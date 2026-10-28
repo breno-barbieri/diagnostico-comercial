@@ -328,6 +328,16 @@ export const config = {
         { valor: "tranquilidade", rotulo: "Outra pessoa assume com tranquilidade", pontos: 2 },
       ],
     },
+    // Onde as vendas ficam anotadas. "organizado" separa sistema e planilha do resto.
+    registro: {
+      pergunta: "Onde ficam anotadas as suas vendas?",
+      opcoes: [
+        { valor: "sistema", rotulo: "Num sistema de vendas", organizado: true },
+        { valor: "planilha", rotulo: "Numa planilha", organizado: true },
+        { valor: "informal", rotulo: "No caderno ou no WhatsApp", organizado: false },
+        { valor: "nenhum", rotulo: "Em lugar nenhum", organizado: false },
+      ],
+    },
   },
 
   // Síntese: hipóteses que o aluno escolhe para investigar (até 3). Não são causas comprovadas.
@@ -385,10 +395,13 @@ export const config = {
       nota: "Escolha feita no resultado, junto com o compromisso.",
     },
     extra: {
-      dependenciaRotulo: "04 · Quando quem mais vende falta",
+      registroRotulo: "04 · Onde as vendas ficam anotadas",
+      registro: "Em **{x} de cada 10** empresas, as vendas não ficam anotadas num sistema nem numa planilha.",
+      registroBase: "{qtd} de {base} empresas anotam no caderno, no WhatsApp ou em lugar nenhum.",
+      dependenciaRotulo: "05 · Quando quem mais vende falta",
       dependencia: "Em **{x} de cada 10** empresas, se quem mais vende sair por uma semana, as vendas param.",
       dependenciaBase: "{param} de {base} empresas responderam que tudo para.",
-      esperadoRotulo: "05 · O que a turma esperava",
+      esperadoRotulo: "06 · O que a turma esperava",
       esperado: "A turma esperava que **{y} de cada 10** {itens} virassem {proxima}. Viraram **{x}**.",
       esperadoBase: "Só empresas com números reais: {n} {empresas}. É a etapa com a maior diferença.",
     },
@@ -572,6 +585,7 @@ export const config = {
       intro: "O que você respondeu, sem interpretação:",
       quemVende: "Quem vende",
       dependencia: "Se quem mais vende sair por uma semana",
+      registro: "Onde as vendas ficam anotadas",
       rituais: "Rituais que roda hoje",
       rituaisNenhum: "Nenhum",
       clienteIdeal: "Seu cliente ideal, nas suas palavras",
