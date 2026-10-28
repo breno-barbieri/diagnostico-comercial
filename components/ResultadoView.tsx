@@ -15,6 +15,7 @@ type Remoto = {
   conversaoReal?: Record<string, boolean>;
   contexto: Record<string, string>;
   compromisso: string | Respostas["compromisso"];
+  frente?: string;
 };
 
 const D = config.devolutiva;
@@ -51,6 +52,13 @@ export default function ResultadoView({ id }: { id: string }) {
     fetch(`/api/respostas/${id}`).then((r) => (r.ok ? r.json() : Promise.reject())).then(setRemoto).catch(() => setFalhou(true));
   }, [id]);
 
+  // Compromisso e frente: preenchidos aqui, depois do resultado, e gravados na resposta.
+  const [rascunho, setRascunho] = useState<Respostas["compromisso"] | null>(null);
+  const [frente, setFrente] = useState<string>("");
+  const [editando, setEditando] = useState(false);
+  const [salvando, setSalvando] = useState(false);
+  const [msg, setMsg] = useState("");
+
   if (falhou) return <main className="p-8">Resultado não encontrado.</main>;
   if (!local && !remoto) return <main className="p-8">Carregando...</main>;
 
@@ -66,6 +74,33 @@ export default function ResultadoView({ id }: { id: string }) {
   const compBruto = local?.respostas.compromisso ?? remoto!.compromisso;
   const comp: Respostas["compromisso"] = typeof compBruto === "string" ? { ...COMPROMISSO_VAZIO, numero: compBruto } : { ...COMPROMISSO_VAZIO, ...compBruto };
   const compromissoPreenchido = Object.values(comp).some((v) => v.trim() !== "");
+  const frenteSalva = local?.respostas.frente ?? remoto?.frente ?? "";
+  const sugestao = gargalo ? D.compromisso.sugestao[gargalo] : D.compromisso.sugestaoSemEtapa;
+  const emEdicao = editando || !compromissoPreenchido;
+  const atual = rascunho ?? { ...comp, numero: comp.numero || sugestao };
+  const frenteAtual = frente || frenteSalva;
+
+  async function salvar() {
+    setSalvando(true);
+    setMsg("");
+    const r = await fetch(`/api/respostas/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ compromisso: atual, frente: frenteAtual }),
+    }).catch(() => null);
+    setSalvando(false);
+    if (!r || !r.ok) { setMsg(D.compromisso.erroSalvar); return; }
+    if (local) {
+      const novo = { ...local, respostas: { ...local.respostas, compromisso: atual, frente: frenteAtual } };
+      setLocal(novo);
+      try { localStorage.setItem(`resultado:${id}`, JSON.stringify(novo)); } catch {}
+    } else if (remoto) {
+      setRemoto({ ...remoto, compromisso: atual, frente: frenteAtual });
+    }
+    setRascunho(null);
+    setEditando(false);
+    setMsg(D.compromisso.salvo);
+  }
 
   // Ações da semana: a primeira é da etapa prioritária, quando há uma. Máximo definido no config.
   const acoes = (() => {
@@ -342,7 +377,30 @@ export default function ResultadoView({ id }: { id: string }) {
       {/* 8. Seu compromisso */}
       <section className={card}>
         <div className={q}>{rot(D.compromisso.rotulo)}</div>
-        {compromissoPreenchido ? (
+        {emEdicao ? (
+          <div className="no-print mt-2 space-y-3">
+            <p className="text-[15px] leading-normal text-grafite">{D.compromisso.intro}</p>
+            <fieldset className="space-y-2">
+              <legend className="mb-1 text-sm font-medium">{config.frente.pergunta}</legend>
+              {config.frente.opcoes.map((o) => (
+                <label key={o.valor} className="flex items-center gap-3 rounded-lg border border-nevoa p-2.5 text-[14.5px]">
+                  <input type="radio" name="frente" className="h-5 w-5" checked={frenteAtual === o.valor} onChange={() => setFrente(o.valor)} />
+                  {o.rotulo}
+                </label>
+              ))}
+            </fieldset>
+            {config.compromisso.campos.map((c) => (
+              <label key={c.id} className="block">
+                <span className="mb-1 block text-sm"><b>{c.rotulo}:</b> {c.pergunta}</span>
+                <input className="input" type={c.tipo === "data" ? "date" : "text"} maxLength={200}
+                  value={atual[c.id]} onChange={(e) => setRascunho({ ...atual, [c.id]: e.target.value })} />
+                {c.id === "numero" && <span className="mt-1 block text-xs text-grafite/60">{D.compromisso.dicaSugestao}</span>}
+              </label>
+            ))}
+            <button className="btn" disabled={salvando} onClick={salvar}>{salvando ? D.compromisso.salvando : D.compromisso.salvar}</button>
+            {msg && <p className="text-sm text-bronze">{msg}</p>}
+          </div>
+        ) : (
           <>
             <div className="mb-2 mt-2 border-l-2 border-bronze bg-nevoa/40 px-3 py-2.5">
               <div className="rotulo">{D.compromisso.numero}</div>
@@ -356,10 +414,12 @@ export default function ResultadoView({ id }: { id: string }) {
                 </div>
               ))}
             </dl>
+            {msg && <p className="no-print mt-2 text-sm text-bronze">{msg}</p>}
+            <button className="no-print btn-sec mt-2" onClick={() => { setEditando(true); setMsg(""); }}>{D.compromisso.editar}</button>
           </>
-        ) : (
-          <p className="mt-1.5 text-[15px] leading-normal text-grafite">{D.compromisso.semPreencher}</p>
         )}
+        {/* No PDF sem compromisso salvo, sai o texto para escrever no papel. */}
+        {emEdicao && <p className="hidden text-[15px] leading-normal text-grafite print:block">{D.compromisso.semPreencher}</p>}
         {dev?.ciclo && <div className={alerta}>{dev.ciclo}</div>}
       </section>
 

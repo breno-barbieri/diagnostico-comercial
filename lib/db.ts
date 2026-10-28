@@ -77,6 +77,23 @@ export async function buscar(id: string): Promise<Registro | null> {
   return row ? (JSON.parse(row.dados) as Registro) : null;
 }
 
+// Atualiza só o compromisso e a frente de uma resposta já gravada (preenchidos depois do resultado).
+export async function atualizarCompromisso(id: string, compromisso: Registro["compromisso"], frente: string): Promise<boolean> {
+  const atual = await buscar(id);
+  if (!atual) return false;
+  const dados = { ...atual, compromisso, frente };
+  if (usaSupabase) {
+    await supa(`respostas?id=eq.${encodeURIComponent(id)}`, {
+      method: "PATCH",
+      headers: { Prefer: "return=minimal" },
+      body: JSON.stringify({ dados }),
+    });
+  } else {
+    getSqlite().prepare("UPDATE respostas SET dados = ? WHERE id = ?").run(JSON.stringify(dados), id);
+  }
+  return true;
+}
+
 export async function listarTurma(turma: string): Promise<Registro[]> {
   if (usaSupabase) {
     const r = await supa(`respostas?turma=eq.${encodeURIComponent(turma)}&select=dados&limit=2000`);

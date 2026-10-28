@@ -7,8 +7,8 @@ import { COMPROMISSO_VAZIO, ETAPAS, calcular, camposAplicaveis, pagamentoEfetivo
 import { montarRegistro } from "../lib/registro";
 import { Assinatura } from "./Marca";
 
-// Cinco blocos, como no roteiro da aula. A identificação é opcional e fica antes da contagem.
-const ETAPAS_FORM = ["Identificação", "Contexto e percepção", "Funil", "Economia da venda", "Rotina", "Achados e compromisso"];
+// Quatro blocos de perguntas. O compromisso fica na tela de resultado, depois de ver o diagnóstico. A identificação é opcional e fica antes da contagem.
+const ETAPAS_FORM = ["Identificação", "Contexto e percepção", "Funil", "Economia da venda", "Rotina"];
 
 const unidadeSufixo: Record<string, string> = { numero: "", reais: "R$", pct: "%", dias: "dias", meses: "meses", vezes: "vezes" };
 
@@ -271,32 +271,6 @@ export default function Formulario({ turma }: { turma: string }) {
                 </label>
               ))}
             </fieldset>
-          </>
-        )}
-
-        {passo === 5 && (
-          <>
-            <fieldset className="space-y-2">
-              <legend className="mb-1 font-medium">{config.frente.pergunta}</legend>
-              {config.frente.opcoes.map((o) => (
-                <label key={o.valor} className="flex items-center gap-3 rounded-lg border border-nevoa p-3">
-                  <input type="radio" name="frente" className="h-5 w-5" checked={r.frente === o.valor} onChange={() => setR({ ...r, frente: o.valor })} />
-                  {o.rotulo}
-                </label>
-              ))}
-            </fieldset>
-            <fieldset className="space-y-3">
-              <legend className="mb-1 text-lg font-display">{config.compromisso.titulo}</legend>
-              <p className="text-sm text-grafite/75">{config.compromisso.instrucao}</p>
-              {config.compromisso.campos.map((c) => (
-                <label key={c.id} className="block">
-                  <span className="mb-1 block text-sm"><b>{c.rotulo}:</b> {c.pergunta}</span>
-                  <input className="input" type={c.tipo === "data" ? "date" : "text"} maxLength={200}
-                    value={r.compromisso[c.id]} onChange={(e) => setR({ ...r, compromisso: { ...r.compromisso, [c.id]: e.target.value } })} />
-                </label>
-              ))}
-            </fieldset>
-            <a className="block text-sm underline" href="/controle" target="_blank" rel="noreferrer">Ver o controle semanal</a>
           </>
         )}
 
