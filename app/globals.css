@@ -18,3 +18,14 @@ h1, h2 { @apply font-display tracking-tight; }
   .card { break-inside: avoid; }
 }
 @page { size: A4; margin: 14mm; }
+
+/* Formulário em tela grande (computador ou telão): tudo maior para ler de longe. */
+@media (min-width: 1024px) {
+  .form-telao { zoom: 1.25; }
+}
+@media (min-width: 1600px) {
+  .form-telao { zoom: 1.45; }
+}
+@media print {
+  .form-telao { zoom: 1; }
+}
