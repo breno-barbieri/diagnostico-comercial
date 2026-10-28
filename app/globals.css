@@ -22,6 +22,8 @@ h1, h2 { @apply font-display tracking-tight; }
 /* Formulário em tela grande (computador ou telão): tudo maior para ler de longe. */
 @media (min-width: 1024px) {
   .form-telao { zoom: 1.25; }
+  .form-telao fieldset + fieldset { margin-top: 2.5rem; }
+  .form-telao legend { font-size: 1.25rem; font-family: var(--font-fraunces), Georgia, serif; margin-bottom: 0.5rem; }
 }
 @media (min-width: 1600px) {
   .form-telao { zoom: 1.45; }

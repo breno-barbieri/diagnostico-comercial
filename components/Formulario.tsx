@@ -107,7 +107,7 @@ export default function Formulario({ turma }: { turma: string }) {
   const toggle = (lista: string[], v: string) => (lista.includes(v) ? lista.filter((x) => x !== v) : [...lista, v]);
 
   return (
-    <main className="form-telao mx-auto max-w-2xl px-4 py-6 lg:max-w-5xl">
+    <main className="form-telao mx-auto max-w-2xl px-4 py-6">
       <div className="mb-6 flex flex-col items-center gap-3"><Assinatura /><div className="rotulo">{config.evento}</div></div>
       <div className="mb-6">
         <div className="mb-2 flex justify-between text-sm text-grafite/75">
@@ -140,7 +140,7 @@ export default function Formulario({ turma }: { turma: string }) {
         )}
 
         {passo === 1 && config.contexto.map((q) => (
-          <fieldset key={q.id} className="grid gap-2 lg:grid-cols-2">
+          <fieldset key={q.id} className="grid gap-2">
             <legend className="mb-1 font-medium">{q.pergunta}</legend>
             {q.opcoes.map((o) => (
               <label key={o.valor} className="flex items-center gap-3 rounded-lg border border-nevoa p-3">
@@ -151,7 +151,7 @@ export default function Formulario({ turma }: { turma: string }) {
           </fieldset>
         ))}
         {passo === 1 && r.contexto.pagamento === "misto" && (
-          <fieldset className="grid gap-2 lg:grid-cols-2 border-l-2 border-bronze pl-4">
+          <fieldset className="grid gap-2 border-l-2 border-bronze pl-4">
             <legend className="mb-1 font-medium">{config.operacaoMista.pergunta}</legend>
             {config.operacaoMista.opcoes.map((v) => {
               const o = config.contexto[0].opcoes.find((x) => x.valor === v)!;
@@ -166,9 +166,9 @@ export default function Formulario({ turma }: { turma: string }) {
         )}
 
         {passo === 1 && (
-          <fieldset className="grid gap-2 lg:grid-cols-2">
+          <fieldset className="grid gap-2">
             <legend className="mb-1 font-medium">{config.percepcao.pergunta}</legend>
-            <p className="text-sm text-grafite/75 lg:col-span-2">Responda antes de ver os números.</p>
+            <p className="text-sm text-grafite/75">Responda antes de ver os números.</p>
             {config.percepcao.opcoes.map((o) => (
               <label key={o.valor} className="flex items-center gap-3 rounded-lg border border-nevoa p-3">
                 <input type="radio" name="percepcao" className="h-5 w-5" checked={r.percepcao === o.valor} onChange={() => setR({ ...r, percepcao: o.valor })} />
@@ -178,9 +178,9 @@ export default function Formulario({ turma }: { turma: string }) {
           </fieldset>
         )}
         {passo === 1 && (
-          <fieldset className="grid gap-3 lg:grid-cols-3">
+          <fieldset className="grid gap-3">
             <legend className="mb-1 font-medium">{config.expectativas.titulo}</legend>
-            <p className="text-sm text-grafite/75 lg:col-span-3">{config.textos.expectativaRegua}</p>
+            <p className="text-sm text-grafite/75">{config.textos.expectativaRegua}</p>
             {ETAPAS.map((e) => (
               <label key={e} className="block rounded-lg border border-nevoa p-3">
                 <span className="mb-2 block text-sm">{config.expectativas.perguntas[e]}</span>
@@ -199,7 +199,7 @@ export default function Formulario({ turma }: { turma: string }) {
           <>
             <h2 className="text-xl">{passo === 2 ? "Funil do último mês" : "Economia da venda"}</h2>
             {passo === 2 && <p className="border-l-2 border-bronze pl-3 text-sm text-grafite/75">{config.textos.funilMensal}</p>}
-            <div className="grid gap-3 lg:grid-cols-2">
+            <div className="grid gap-3">
             {camposAplicaveis(pagamento).filter((c) => c.bloco === (passo === 2 ? "funil" : "economia")).map((c) => {
               const v = r.campos[c.id] ?? { valor: null, marca: null };
               const off = v.marca === "desconhecido" || v.marca === "nao_se_aplica";
@@ -239,7 +239,7 @@ export default function Formulario({ turma }: { turma: string }) {
 
         {passo === 4 && (
           <>
-            <fieldset className="grid gap-2 lg:grid-cols-2">
+            <fieldset className="grid gap-2">
               <legend className="mb-1 font-medium">{config.ponte.rituais.pergunta}</legend>
               {config.ponte.rituais.opcoes.map((o) => (
                 <label key={o.valor} className="flex items-center gap-3 rounded-lg border border-nevoa p-3">
@@ -252,7 +252,7 @@ export default function Formulario({ turma }: { turma: string }) {
                 </label>
               ))}
             </fieldset>
-            <fieldset className="grid gap-2 lg:grid-cols-2">
+            <fieldset className="grid gap-2">
               <legend className="mb-1 font-medium">{config.ponte.clienteIdeal.pergunta}</legend>
               {(["sim", "nao"] as const).map((v) => (
                 <label key={v} className="flex items-center gap-3 rounded-lg border border-nevoa p-3">
@@ -261,10 +261,10 @@ export default function Formulario({ turma }: { turma: string }) {
                 </label>
               ))}
               {r.ponte.clienteIdeal === "sim" && (
-                <input className="input lg:col-span-2" placeholder={config.ponte.clienteIdeal.textoLabel} value={r.ponte.clienteIdealTexto} onChange={(e) => setR({ ...r, ponte: { ...r.ponte, clienteIdealTexto: e.target.value } })} />
+                <input className="input" placeholder={config.ponte.clienteIdeal.textoLabel} value={r.ponte.clienteIdealTexto} onChange={(e) => setR({ ...r, ponte: { ...r.ponte, clienteIdealTexto: e.target.value } })} />
               )}
             </fieldset>
-            <fieldset className="grid gap-2 lg:grid-cols-2">
+            <fieldset className="grid gap-2">
               <legend className="mb-1 font-medium">{config.ponte.dependencia.pergunta}</legend>
               {config.ponte.dependencia.opcoes.map((o) => (
                 <label key={o.valor} className="flex items-center gap-3 rounded-lg border border-nevoa p-3">
