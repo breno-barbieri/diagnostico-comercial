@@ -9,6 +9,8 @@ const P = config.painel;
 const NOME_FUNIL: Record<string, string> = { A: "Contatos", B: "Atendimentos", C: "Orçamentos", D: "Vendas" };
 const fmt = (t: string, v: Record<string, string | number>) => t.replace(/\{(\w+)\}/g, (_, k) => String(v[k] ?? ""));
 const listaE = (xs: string[]) => (xs.length > 1 ? `${xs.slice(0, -1).join(", ")} e ${xs[xs.length - 1]}` : xs[0] ?? "");
+// Proporção de 0 a 1 em "x de cada 10", com uma casa quando não for inteira.
+const dezDe = (p: number) => (Math.round(p * 100) / 10).toLocaleString("pt-BR", { maximumFractionDigits: 1 });
 const minuscula = (t: string) => t.charAt(0).toLowerCase() + t.slice(1);
 
 // Texto com **trechos em negrito**.
@@ -146,6 +148,34 @@ export default function PainelView({ turma }: { turma: string }) {
               <p className="mt-3 text-base text-papel/55 lg:text-lg">{P.frente.nota}</p>
             </section>
           </div>
+
+          {(d.dependencia.base > 0 || d.esperadoConseguido) && (
+            <div className="mt-10 grid gap-12 border-t border-papel/15 pt-8 lg:grid-cols-2 lg:gap-14">
+              {d.dependencia.base > 0 && (
+                <section>
+                  <div className="rotulo">{P.extra.dependenciaRotulo}</div>
+                  <p className={concl}><Rico texto={fmt(P.extra.dependencia, { x: dezDe(d.dependencia.param / d.dependencia.base) })} /></p>
+                  <p className="text-base text-papel/55 lg:text-lg">{fmt(P.extra.dependenciaBase, { param: d.dependencia.param, base: d.dependencia.base })}</p>
+                </section>
+              )}
+              {d.esperadoConseguido && (
+                <section>
+                  <div className="rotulo">{P.extra.esperadoRotulo}</div>
+                  <p className={concl}>
+                    <Rico texto={fmt(P.extra.esperado, {
+                      y: dezDe(d.esperadoConseguido.esperava! / 100),
+                      x: dezDe(d.esperadoConseguido.conseguiu! / 100),
+                      itens: config.devolutiva.etapas[d.esperadoConseguido.etapa].itens,
+                      proxima: config.devolutiva.etapas[d.esperadoConseguido.etapa].proxima,
+                    })} />
+                  </p>
+                  <p className="text-base text-papel/55 lg:text-lg">
+                    {fmt(P.extra.esperadoBase, { n: d.esperadoConseguido.n, empresas: d.esperadoConseguido.n === 1 ? "empresa" : "empresas" })}
+                  </p>
+                </section>
+              )}
+            </div>
+          )}
         </>
       )}
     </main>

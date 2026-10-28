@@ -113,9 +113,26 @@ export function agregar(regs: Registro[]) {
   // Frente escolhida para as próximas 4 semanas.
   const frentes = config.frente.opcoes.map((o) => ({ valor: o.valor, rotulo: o.rotulo, passo: o.passo, qtd: regs.filter((r) => r.frente === o.valor).length }));
 
+  // Quantas empresas param de vender se quem mais vende sair por uma semana.
+  const depResp = regs.filter((r) => r.ponte?.dependencia);
+  const dependencia = { base: depResp.length, param: depResp.filter((r) => r.ponte.dependencia === "tudo_para").length };
+
+  // Esperado x conseguido, só com números reais: mediana de cada etapa e a etapa com a maior distância.
+  const esperadoConseguido = (["lead_reuniao", "reuniao_proposta", "proposta_venda"] as const)
+    .map((e) => {
+      const ok = regs.filter((r) => r.conversaoReal?.[e] && typeof r.conversoes?.[e] === "number" && typeof r.esperados?.[e] === "number");
+      const conseguiu = mediana(ok.map((r) => r.conversoes[e] as number));
+      const esperava = mediana(ok.map((r) => r.esperados[e] as number));
+      return { etapa: e, n: ok.length, conseguiu, esperava };
+    })
+    .filter((x) => x.n > 0 && x.conseguiu !== null && x.esperava !== null && x.esperava > 0)
+    .sort((a, b) => (b.esperava! - b.conseguiu!) / b.esperava! - (a.esperava! - a.conseguiu!) / a.esperava!)[0] ?? null;
+
   return {
     total,
     medicao,
+    dependencia,
+    esperadoConseguido,
     acha,
     frentes,
     conversaoTurma,
